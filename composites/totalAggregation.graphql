@@ -1,0 +1,18 @@
+# (for reference only)
+
+interface PointsAggregationInterface @loadModel(id: "kjzl6hvfrbw6c5m5bxe6jl7cocyxpg9b8em5w9mo3l8ws4zl5c0tu5vgapitpvk") {
+  id: ID!
+}
+
+type TotalPointAggregation implements PointsAggregationInterface # Deployed model ID: kjzl6hvfrbw6c93rqxx48gfs6jfv8zljdd52wub56onandvz0f8abavuvgdfk0f
+  @createModel(
+    description: "A simple aggregation model with a verified total"
+    accountRelation: SET
+    accountRelationFields: ["recipient"]
+  ) {
+  issuer: DID! @documentAccount
+  recipient: DID! @accountReference
+  points: Int!
+  date: DateTime!
+  verified: Boolean
+}
