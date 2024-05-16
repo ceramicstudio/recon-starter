@@ -8,6 +8,7 @@ export const calculateReferrals = async (
     const referralScores = [] as Array<RecipientScore>;
 
     rows.forEach((row, index) => {
+      // if the row is a new entry
       if (!chron) {
         if (index >= input.startRow) {
           const recipient = row.answers.find(
@@ -26,6 +27,7 @@ export const calculateReferrals = async (
           }
         }
       } else {
+        // switch case for when the run is to patch existing entries
         if (index < startRow) {
           const recipient = row.answers.find(
             (answer) =>
