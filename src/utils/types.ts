@@ -33,6 +33,15 @@ export interface ScoreReferralInput extends ScoreInput {
   chron?: boolean;
 }
 
+export interface PgTotalAggregation {
+  id: number;
+  issuer: string;
+  recipient: string;
+  points: number;
+  date: string;
+  verified: boolean | null;
+}
+
 export interface ScoreInput {
   rows: DeformEntry[];
   startRow: number;
@@ -42,6 +51,10 @@ export interface AggregationContent {
   recipient: string; // DID
   points: number;
   date: string;
+}
+
+export interface ContextAggregationContent extends AggregationContent {
+  context: string;
 }
 
 export interface PointsContent {

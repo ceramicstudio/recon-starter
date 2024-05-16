@@ -34,17 +34,15 @@ export default async function updatePg(
     // const stringified = JSON.stringify(obj);
     // const b64 = Buffer.from(stringified).toString("base64");
 
-    return res.json({
-      ANSWERS,
-    });
 
-    const checkAllocations = `SELECT * FROM SimplePointAggregation`;
+
+    const checkAllocations = `SELECT * FROM total_point_aggregation`;
 
     const vals = await client.query(checkAllocations);
     await client.end();
 
     return res.json({
-      vals: vals
+      vals: vals.rows
     });
   } catch (err) {
     res.json({

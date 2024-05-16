@@ -12,7 +12,7 @@ const aggregationModelID: string | undefined =
 const allocationModelID: string | undefined =
   process.env.ALLOCATION_ID ?? undefined;
 const totalAggregationModelID: string | undefined =
-  process.env.TOTAL_AGGREGATION_ID ?? undefined;
+  process.env.VERIFIED_TOTAL_ID ?? undefined;
 
 //eslint-disable-next-line
 const seed = fromString(CERAMIC_PRIVATE_KEY, "base16") as Uint8Array;

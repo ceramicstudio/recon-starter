@@ -33,10 +33,10 @@ export const createPgPoints = async (score: RecipientScore) => {
     });
     await client.connect();
 
-    //Query to determine if the recipient already has an entry in the total aggregation table based on the context
+    //Query to determine if the recipient already has an entry in the total aggregation table 
     const totalPointAggregation = `SELECT * FROM total_point_aggregation WHERE recipient='${transformedScore.recipient}' AND issuer='${issuerId}'`;
 
-    const aggregationDocs = await client.query(
+    const totalAggregationDocs = await client.query(
       totalPointAggregation,
     );
 
@@ -70,15 +70,15 @@ export const createPgPoints = async (score: RecipientScore) => {
 
     let totalAggregationResult;
 
-    if (aggregationDocs && aggregationDocs.rows.length === 0) {
+    if (totalAggregationDocs && totalAggregationDocs.rows.length === 0) {
       // Insert new simple point aggregation entry
-      const newSimpleAggregationEntry = `INSERT INTO simple_point_aggregation (issuer, recipient, points, date) VALUES ('${issuerId}', '${transformedScore.recipient}', ${transformedScore.amount}, '${new Date().toISOString()}') RETURNING *`;
+      const newSimpleAggregationEntry = `INSERT INTO total_point_aggregation (issuer, recipient, points, date) VALUES ('${issuerId}', '${transformedScore.recipient}', ${transformedScore.amount}, '${new Date().toISOString()}') RETURNING *`;
       totalAggregationResult = await client.query(newSimpleAggregationEntry);
-    } else if (aggregationDocs && aggregationDocs.rows.length > 0) {
+    } else if (totalAggregationDocs && totalAggregationDocs.rows.length > 0) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment , @typescript-eslint/no-unsafe-member-access
-      const updatedPoints = aggregationDocs.rows[0].points + transformedScore.amount;
+      const updatedPoints = totalAggregationDocs.rows[0].points + transformedScore.amount;
       // Update simple point aggregation entry
-      const updateSimpleAggregationEntry = `UPDATE simple_point_aggregation SET points = ${updatedPoints} WHERE recipient = '${transformedScore.recipient}' AND issuer = '${issuerId}' RETURNING *`;
+      const updateSimpleAggregationEntry = `UPDATE total_point_aggregation SET points = ${updatedPoints} WHERE recipient = '${transformedScore.recipient}' AND issuer = '${issuerId}' RETURNING *`;
       totalAggregationResult = await client.query(
         updateSimpleAggregationEntry,
       );

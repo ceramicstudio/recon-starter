@@ -5,7 +5,11 @@ import { calculate } from "@/utils/calculateScores";
 import { getAggregationCount } from "@/utils/readAggregationCount";
 import { getDeform } from "@/utils/getDeformData";
 import { calculateReferrals } from "@/utils/referrals";
-import { processReferralPoints } from "@/utils/processReferralPoints";
+import {
+  processReferralPoints,
+  processReferralPgPoints,
+} from "@/utils/processReferralPoints";
+import { getPgTotalCount } from "@/utils/pgAggregationCount";
 
 interface Response extends NextApiResponse {
   status(code: number): Response;
@@ -26,8 +30,13 @@ export default async function handler(req: NextApiRequest, res: Response) {
     //determine the total number of entries
     const totalEntries = rows.length;
 
-    //fetch number of current agg documents as a proxy for the number entries recorded
-    const aggregations = await getAggregationCount();
+    //fetch number of current agg documents as a proxy for the number entries recorded from Ceramic
+    // const aggregations = await getAggregationCount();
+
+    // fetch the total number of entries from the Postgres database
+    const aggregations = await getPgTotalCount().then((data) => {
+      return data?.aggregationCount;
+    });
 
     // failure mode for fetching aggregation data
     if (aggregations === undefined) {
@@ -48,9 +57,17 @@ export default async function handler(req: NextApiRequest, res: Response) {
       return res.status(500).send({ error: finalReferralScores.error });
     }
 
+    // process and write the patches to Postgres
+    const patchedReferralPgResults =
+      finalReferralScores.length > 0
+        ? await processReferralPgPoints(finalReferralScores)
+        : [];
+
     // process and write the patches to Ceramic
     const patchedReferralResults =
-      await processReferralPoints(finalReferralScores);
+      finalReferralScores.length > 0
+        ? await processReferralPoints(finalReferralScores)
+        : [];
 
     // next, handle new entries
 
@@ -77,6 +94,8 @@ export default async function handler(req: NextApiRequest, res: Response) {
       if ("error" in referralScores) {
         return res.status(500).send({ error: referralScores.error });
       }
+
+      // TO DO: DECOUPLE PG FROM BELOW CALL
 
       // process and write the scores to Ceramic
       const results = await processSingleContextPoints([

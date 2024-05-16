@@ -20,7 +20,6 @@ export const getDeform = async (): Promise<DeformResponse | undefined> => {
       },
     );
     const results = (await response.json()) as DeformResponse;
-    console.log(results);
     return results;
   } catch (error) {
     console.error(error);
