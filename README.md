@@ -27,7 +27,7 @@ You will also need to create tables using specific definitions relevant to this 
 npm install
 ```
 
-2. Clone the .env.example file and rename it .env. Populate this file with the necessary credentials from the dependencies this application will be using
+2. Clone the .env.example file and rename it .env. Populate this file with the necessary credentials from the dependencies this application will be using. If corresponding env values have been provided for you, keep them in as-is
 
 3. Run the application in development
 
