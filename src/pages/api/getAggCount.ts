@@ -1,6 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { getAggregationCount } from "@/utils/readAggregationCount";
-import { type Error } from "@/utils/types";
+import { getAggregationCount } from "@/utils/ceramic/readAggregationCount";
+import { type Error } from "@/types";
 
 interface Response extends NextApiResponse {
   status(code: number): Response;

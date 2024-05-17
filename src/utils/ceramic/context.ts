@@ -2,7 +2,7 @@ import { PointsWriter, PointsReader } from "@ceramic-solutions/points";
 import { getAuthenticatedDID } from "@ceramic-solutions/key-did";
 import { fromString } from "uint8arrays";
 import { ComposeClient } from "@composedb/client";
-import { definition } from "@/utils/definition";
+import { definition } from "@/utils/ceramic/definition";
 import type { RuntimeCompositeDefinition } from "@composedb/types";
 
 const ceramic = process.env.CERAMIC_API ?? "";

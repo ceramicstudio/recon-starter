@@ -1,6 +1,6 @@
-import { type RecipientScore, type NewPoints } from "./types";
+import { type RecipientScore, type NewPoints } from "../../types";
 import { createPoints } from "./createPoints";
-import { getAggregation } from "@/utils/readAggregations";
+import { getAggregation } from "@/utils/ceramic/readAggregations";
 
 export const processReferralPoints = async (scores: Array<RecipientScore>) => {
   try {

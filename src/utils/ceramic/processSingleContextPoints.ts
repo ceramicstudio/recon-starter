@@ -1,4 +1,4 @@
-import { type RecipientScore, type NewPoints } from "./types";
+import { type RecipientScore, type NewPoints } from "../../types";
 import { createPoints } from "./createPoints";
 import { getAllocations } from "./readAllocations";
 

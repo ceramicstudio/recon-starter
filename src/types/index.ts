@@ -132,3 +132,7 @@ export interface DeformResponse {
     limit: number;
   };
 }
+
+export interface Extended extends PgTotalAggregation {
+  ens?: string;
+}

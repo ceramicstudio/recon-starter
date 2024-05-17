@@ -1,4 +1,4 @@
-import { composeClient, issuer } from "@/utils/context";
+import { composeClient, issuer } from "@/utils/ceramic/context";
 
 export const getAggregationCount = async (): Promise<number | undefined> => {
     try {

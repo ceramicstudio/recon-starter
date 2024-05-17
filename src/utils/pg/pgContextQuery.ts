@@ -1,5 +1,5 @@
-import { issuer } from "../context";
-import { type ContextAggregationContent } from "../types";
+import { issuer } from "../ceramic/context";
+import { type ContextAggregationContent } from "../../types";
 import * as pg from "pg";
 
 const STRING = process.env.DATABASE_URL;

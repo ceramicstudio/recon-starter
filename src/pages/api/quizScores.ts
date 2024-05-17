@@ -1,6 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { calculate } from "@/utils/calculateScores";
-import { type RecipientScore, type Error, type DeformEntry } from "@/utils/types";
+import { calculate } from "@/utils/calculate/calculateScores";
+import { type RecipientScore, type Error, type DeformEntry } from "@/types";
 
 interface Response extends NextApiResponse {
   status(code: number): Response;

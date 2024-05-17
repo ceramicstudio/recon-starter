@@ -1,10 +1,10 @@
-import { type Error, type Message, type NewPoints } from "@/utils/types";
+import { type Error, type Message, type NewPoints } from "@/types";
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { processSingleContextPoints } from "@/utils/processSingleContextPoints";
-import { calculate } from "@/utils/calculateScores";
+import { processSingleContextPoints } from "@/utils/ceramic/processSingleContextPoints";
+import { calculate } from "@/utils/calculate/calculateScores";
 import { getDeform } from "@/utils/getDeformData";
-import { calculateReferrals } from "@/utils/referrals";
-import { processReferralPoints } from "@/utils/processReferralPoints";
+import { calculateReferrals } from "@/utils/calculate/calculateReferrals";
+import { processReferralPoints } from "@/utils/ceramic/processReferralPoints";
 import {
   processReferralPgPoints,
   writeScoresToPg,

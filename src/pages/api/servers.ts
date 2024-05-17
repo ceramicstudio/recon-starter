@@ -1,5 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { type Guilds } from "@/utils/types";
+import { type Guilds } from "@/types";
 
 interface Request extends NextApiRequest {
   body: {

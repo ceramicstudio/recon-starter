@@ -1,11 +1,11 @@
-import { issuer } from "../context";
-import { type PgTotalAggregation } from "../types";
+import { issuer } from "../ceramic/context";
+import { type PgTotalAggregation } from "../../types";
 import * as pg from "pg";
 
 const STRING = process.env.DATABASE_URL;
 const { Client, Pool } = pg;
 
-export const getPgTotalCount = async (): Promise<
+export const getPgTotalCount = async (count?: number): Promise<
   | {
       aggregations: PgTotalAggregation[];
       aggregationCount: number;
@@ -33,7 +33,7 @@ export const getPgTotalCount = async (): Promise<
     await client.connect();
 
     // Get all the total point aggregation entries for the issuer
-    const totalPointAggregation = `SELECT * FROM total_point_aggregation WHERE issuer='${issuerId}'`;
+    const totalPointAggregation = `SELECT * FROM total_point_aggregation WHERE issuer='${issuerId}' ORDER BY points DESC ${count ? `LIMIT ${count}` : ""}`;
 
     const aggregationDocs = (await client.query(totalPointAggregation)) as {
       rows: PgTotalAggregation[];

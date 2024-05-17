@@ -1,6 +1,6 @@
-import { type RecipientScore } from "../types";
+import { type RecipientScore } from "../../types";
 import { createPgPoints } from "./pg";
-import { getPgContextAggregation } from "@/utils/pg/pgGeneralQuery";
+import { getPgContextAggregation } from "@/utils/pg/pgContextQuery";
 
 export const processReferralPgPoints = async (
   scores: Array<RecipientScore>,

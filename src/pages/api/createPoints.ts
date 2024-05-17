@@ -5,8 +5,8 @@ import {
   type NewPoints,
   type SinglePointsRequest,
   type Error
-} from "@/utils/types";
-import { createAggregations, createAllocation } from "@/utils/createPoints";
+} from "@/types";
+import { createAggregations, createAllocation } from "@/utils/ceramic/createPoints";
 
 interface Request extends NextApiRequest {
   body: SinglePointsRequest;

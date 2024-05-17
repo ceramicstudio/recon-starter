@@ -1,5 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { type Error } from "@/utils/types";
+import { type Error } from "@/types";
 import { passport } from "@/utils/submitPassport";
 
 interface Response extends NextApiResponse {

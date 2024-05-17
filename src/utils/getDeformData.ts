@@ -1,4 +1,4 @@
-import { type DeformResponse } from "@/utils/types";
+import { type DeformResponse } from "@/types";
 
 const DEFORM_API_KEY = process.env.DEFORM_API_KEY ?? "";
 const DEFORM_ID = process.env.DEFORM_ID ?? "";

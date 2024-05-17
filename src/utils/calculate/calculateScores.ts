@@ -1,4 +1,4 @@
-import { type ScoreInput, type RecipientScore } from "./types";
+import { type ScoreInput, type RecipientScore } from "../../types";
 
 const ANSWERS = process.env.ANSWERS ?? "";
 

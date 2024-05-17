@@ -1,4 +1,4 @@
-import { type ScoreReferralInput, type RecipientScore } from "./types";
+import { type ScoreReferralInput, type RecipientScore } from "../../types";
 
 export const calculateReferrals = async (
   input: ScoreReferralInput,

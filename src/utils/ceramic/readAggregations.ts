@@ -1,6 +1,6 @@
 import { contextWriter, writer } from "./context";
 import type { ModelInstanceDocument } from "@composedb/types";
-import { type AggregationContent } from "@/utils/types";
+import { type AggregationContent } from "@/types";
 
 export const getAggregation = async (recipient: string, context?: string) => {
   try {

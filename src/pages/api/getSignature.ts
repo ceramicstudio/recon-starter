@@ -1,6 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import axios from "axios";
-import { type Error } from "@/utils/types";
+import { type Error } from "@/types";
 
 interface Response extends NextApiResponse {
   status(code: number): Response;

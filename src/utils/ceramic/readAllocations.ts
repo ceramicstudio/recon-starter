@@ -1,5 +1,5 @@
 import { composeClient, issuer } from "./context";
-import { type AllocationNode } from "@/utils/types";
+import { type AllocationNode } from "@/types";
 
 export const getAllocations = async (recipient: string, context: string) => {
   try {

@@ -6,8 +6,8 @@ import {
   type AllocationContent,
   type SinglePointsRequest,
   type RecipientScore,
-} from "@/utils/types";
-import { getAggregation } from "@/utils/readAggregations";
+} from "@/types";
+import { getAggregation } from "@/utils/ceramic/readAggregations";
 
 export const createAllocation = async ({
   recipient,

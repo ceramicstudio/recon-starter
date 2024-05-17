@@ -1,6 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { getSheetData } from "@/utils/sheetData";
-import { type Error } from "@/utils/types";
+import { type Error } from "@/types";
 
 interface Response extends NextApiResponse {
   status(code: number): Response;

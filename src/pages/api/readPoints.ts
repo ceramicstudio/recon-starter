@@ -1,7 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { contextReader, reader } from "@/utils/context";
-import { getAllocations } from "@/utils/readAllocations";
-import { type AllocationNode, type Error } from "@/utils/types";
+import { contextReader, reader } from "@/utils/ceramic/context";
+import { getAllocations } from "@/utils/ceramic/readAllocations";
+import { type AllocationNode, type Error } from "@/types";
 
 interface Request extends NextApiRequest {
   body: {

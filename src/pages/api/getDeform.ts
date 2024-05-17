@@ -1,5 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { type DeformResponse } from "@/utils/types";
+import { type DeformResponse } from "@/types";
 import { getDeform } from "@/utils/getDeformData";
 
 interface Response extends NextApiResponse {
