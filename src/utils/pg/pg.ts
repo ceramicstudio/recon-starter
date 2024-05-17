@@ -1,5 +1,5 @@
 import { type RecipientScore } from "@/utils/types";
-import { issuer } from "./context";
+import { issuer } from "../context";
 import * as pg from "pg";
 
 const STRING = process.env.DATABASE_URL;

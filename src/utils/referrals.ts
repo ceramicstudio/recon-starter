@@ -11,16 +11,16 @@ export const calculateReferrals = async (
       // if the row is a new entry
       if (!chron) {
         if (index >= input.startRow) {
-          const recipient = row.answers.find(
+          const address = row.answers.find(
             (answer) =>
               answer.name === "What is your wallet address? - Wallet Address",
           )?.value;
-
+            
           const referrals = row.waitlistInfo?.referralCount;
           const score = referrals ? referrals * 100 : 0;
-          if (typeof recipient === "string") {
+          if (typeof address === "string") {
             referralScores.push({
-              recipient,
+              recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
               score,
               context: "Referral",
             });
@@ -29,16 +29,16 @@ export const calculateReferrals = async (
       } else {
         // switch case for when the run is to patch existing entries
         if (index < startRow) {
-          const recipient = row.answers.find(
+          const address = row.answers.find(
             (answer) =>
               answer.name === "What is your wallet address? - Wallet Address",
           )?.value;
-
+          
           const referrals = row.waitlistInfo?.referralCount;
           const score = referrals ? referrals * 100 : 0;
-          if (typeof recipient === "string") {
+          if (typeof address === "string") {
             referralScores.push({
-              recipient,
+              recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
               score,
               context: "Referral",
             });

@@ -2,14 +2,19 @@ import { type Error, type Message, type NewPoints } from "@/utils/types";
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { processSingleContextPoints } from "@/utils/processSingleContextPoints";
 import { calculate } from "@/utils/calculateScores";
-import { getAggregationCount } from "@/utils/readAggregationCount";
 import { getDeform } from "@/utils/getDeformData";
 import { calculateReferrals } from "@/utils/referrals";
+import { processReferralPoints } from "@/utils/processReferralPoints";
 import {
-  processReferralPoints,
   processReferralPgPoints,
-} from "@/utils/processReferralPoints";
-import { getPgTotalCount } from "@/utils/pgAggregationCount";
+  writeScoresToPg,
+} from "@/utils/pg/processPgPoints";
+import { getPgTotalCount } from "@/utils/pg/pgAggregationCount";
+// import { getAggregationCount } from "@/utils/readAggregationCount";
+
+/*
+NOTE: current implementation uses Postgres as the source of truth, and prioritizes writing to Postgres first.
+*/
 
 interface Response extends NextApiResponse {
   status(code: number): Response;
@@ -63,6 +68,8 @@ export default async function handler(req: NextApiRequest, res: Response) {
         ? await processReferralPgPoints(finalReferralScores)
         : [];
 
+    console.log("Processed PG referral patches: ", patchedReferralPgResults);
+
     // process and write the patches to Ceramic
     const patchedReferralResults =
       finalReferralScores.length > 0
@@ -95,7 +102,13 @@ export default async function handler(req: NextApiRequest, res: Response) {
         return res.status(500).send({ error: referralScores.error });
       }
 
-      // TO DO: DECOUPLE PG FROM BELOW CALL
+      // Take care of PG first
+      const pgResults = await writeScoresToPg([
+        ...finalScores,
+        ...referralScores,
+      ]);
+
+      console.log("Processed PG results: ", pgResults);
 
       // process and write the scores to Ceramic
       const results = await processSingleContextPoints([

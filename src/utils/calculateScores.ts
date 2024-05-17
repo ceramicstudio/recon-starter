@@ -40,38 +40,38 @@ export const calculate = async (
         }
       }
       // find the wallet address
-      const recipient = answers?.find(
+      const address = answers?.find(
         (answer) =>
           answer.name === "What is your wallet address? - Wallet Address",
       )?.value;
 
-      if (!recipient || typeof recipient !== "string") {
+      if (!address || typeof address !== "string") {
         return { error: "Internal Server Error" };
       }
       // add the quiz scores to the recipientScores array
       recipientScores.push({
-        recipient,
+        recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
         score,
         context: `Onboarding Quiz`,
       });
 
       // add the rewards for connecting X
       recipientScores.push({
-        recipient,
+        recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
         score: 50,
         context: `Twitter`,
       });
 
       // add the rewards for connecting Discord
       recipientScores.push({
-        recipient,
+        recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
         score: 50,
         context: `Discord`,
       });
 
       // add the rewards for subscribing email
       recipientScores.push({
-        recipient,
+        recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
         score: 50,
         context: `Email`,
       });

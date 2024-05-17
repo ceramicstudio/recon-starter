@@ -1,16 +1,14 @@
-import { issuer } from "./context";
-import { type ContextAggregationContent } from "./types";
+import { issuer } from "../context";
+import { type PgTotalAggregation } from "../types";
 import * as pg from "pg";
 
 const STRING = process.env.DATABASE_URL;
 const { Client, Pool } = pg;
 
-export const getPgContextAggregation = async (
-  recipient: string,
-  context: string,
-): Promise<
+export const getPgTotalCount = async (): Promise<
   | {
-      aggregation: ContextAggregationContent | Record<string, never>;
+      aggregations: PgTotalAggregation[];
+      aggregationCount: number;
     }
   | undefined
 > => {
@@ -35,15 +33,16 @@ export const getPgContextAggregation = async (
     await client.connect();
 
     // Get all the total point aggregation entries for the issuer
-    const totalPointAggregation = `SELECT * FROM context_point_aggregation WHERE issuer='${issuerId}' AND context='${context}' AND recipient='${recipient}'`;
+    const totalPointAggregation = `SELECT * FROM total_point_aggregation WHERE issuer='${issuerId}'`;
 
     const aggregationDocs = (await client.query(totalPointAggregation)) as {
-      rows: ContextAggregationContent[];
+      rows: PgTotalAggregation[];
     };
 
     await client.end();
     return {
-      aggregation: aggregationDocs.rows[0] ?? {},
+      aggregations: aggregationDocs.rows,
+      aggregationCount: aggregationDocs.rows.length,
     };
   } catch (Error) {
     return undefined;
