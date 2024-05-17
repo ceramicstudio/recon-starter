@@ -48,6 +48,19 @@
 //     verified boolean)
 // `;
 
+// const PersonTableString = `
+//   CREATE TABLE customers (
+//     id SERIAL PRIMARY KEY,
+//     participant text[],
+//     technical boolean,
+//     excitement integer,
+//     xUsername text,
+//     email text,
+//     address text,
+//     discordHandle text,
+//     discordId text)
+// `;
+
 //     const ContextPointAllocationString = `
 // CREATE TABLE context_point_allocation (
 //   id SERIAL PRIMARY KEY,
@@ -70,6 +83,7 @@
 //     await client.query(TotalPointAggregationString);
 //     await client.query(ContextPointAllocationString);
 //     await client.query(SimplePointAllocationString);
+//     await client.query(PersonTableString);
 
 //     const vals = await client.query("SELECT * FROM pg_catalog.pg_tables");
 //     await client.end();
