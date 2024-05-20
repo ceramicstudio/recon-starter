@@ -16,7 +16,6 @@ export const readAggTotals = async ({
         }
       })
       .join(", ");
-    console.log(filterString);
     const aggregations = await composeClient.executeQuery<{
       node: {
         totalPointsAggregationList: {
@@ -27,7 +26,7 @@ export const readAggTotals = async ({
       query GetAggregations {
         node(id: "${issuer.id}") {
           ... on CeramicAccount {
-            totalPointsAggregationList(first: 1000, filters: { or: [${filterString}] }) {
+            totalPointsAggregationList(first: 1000, filters: { or: [${filterString}] }, sorting: { recipient: ASC }) {
                 edges {
                     node {
                         id
@@ -35,6 +34,7 @@ export const readAggTotals = async ({
                         issuer {
                             id
                         }
+                        date
                         recipient {
                             id
                         }

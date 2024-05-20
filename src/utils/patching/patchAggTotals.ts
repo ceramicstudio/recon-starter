@@ -11,7 +11,9 @@ export const patchAggTotals = async () => {
       };
     }
     const total: number = data.aggregationCount;
-    const aggregations: PgTotalAggregation[] = data.aggregations;
+    const aggregations: PgTotalAggregation[] = data.aggregations.sort((a, b) =>
+      b.recipient < a.recipient ? 1 : -1,
+    );
     const recipientsFromAggregations = aggregations.map((agg) => agg.recipient);
     const graphQlGroupings = total > 1000 ? Math.ceil(total / 1000) : 1;
     const totals: PgTotalAggregation[] = [];
@@ -24,9 +26,7 @@ export const patchAggTotals = async () => {
         totals.push(...total);
       }
     }
-
     // do something with totals
-    return totals;
   } catch (error) {
     console.error(error);
     return undefined;
