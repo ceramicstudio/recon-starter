@@ -1,15 +1,22 @@
 # (for reference only)
 
-interface PointsAggregationInterface @loadModel(id: "kjzl6hvfrbw6c5m5bxe6jl7cocyxpg9b8em5w9mo3l8ws4zl5c0tu5vgapitpvk") {
+interface PointsAggregationInterface
+  @loadModel(
+    id: "kjzl6hvfrbw6c5m5bxe6jl7cocyxpg9b8em5w9mo3l8ws4zl5c0tu5vgapitpvk"
+  ) {
   id: ID!
 }
 
-type TotalPointAggregation implements PointsAggregationInterface # Deployed model ID: kjzl6hvfrbw6c93rqxx48gfs6jfv8zljdd52wub56onandvz0f8abavuvgdfk0f
+type TotalPointsAggregation implements PointsAggregationInterface  # Deployed model ID: kjzl6hvfrbw6c5kay9pqvquxb6bdju0944omqd4m36darclqvsetvvzz4k8fnkx
   @createModel(
     description: "A simple aggregation model with a verified total"
     accountRelation: SET
     accountRelationFields: ["recipient"]
-  ) {
+  )
+  @createIndex(fields: [{ path: "points" }])
+  @createIndex(fields: [{ path: "date" }])
+  @createIndex(fields: [{ path: "verified" }])
+  @createIndex(fields: [{ path: "recipient" }]) {
   issuer: DID! @documentAccount
   recipient: DID! @accountReference
   points: Int!

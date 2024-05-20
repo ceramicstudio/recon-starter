@@ -53,13 +53,13 @@ export const definition = {
       id: "kjzl6hvfrbw6c9rahz7aal75i0ncxkf5wmircmtpz2s34xls8ux1p08ic655oek",
       accountRelation: { type: "list" },
     },
-    TotalPointAggregation: {
+    TotalPointsAggregation: {
       interface: false,
       implements: [
         "kjzl6hvfrbw6c5m5bxe6jl7cocyxpg9b8em5w9mo3l8ws4zl5c0tu5vgapitpvk",
         "kjzl6hvfrbw6c6lxvcf8bc07wjyn29ocoxqn877uia1y86qph79axtdrcuijpeo",
       ],
-      id: "kjzl6hvfrbw6c93rqxx48gfs6jfv8zljdd52wub56onandvz0f8abavuvgdfk0f",
+      id: "kjzl6hvfrbw6c5kay9pqvquxb6bdju0944omqd4m36darclqvsetvvzz4k8fnkx",
       accountRelation: { type: "set", fields: ["recipient"] },
     },
   },
@@ -121,11 +121,31 @@ export const definition = {
       recipient: { type: "did", required: true, immutable: false },
       issuer: { type: "view", viewType: "documentAccount" },
     },
-    TotalPointAggregation: {
-      date: { type: "datetime", required: true, immutable: false },
-      points: { type: "integer", required: true, immutable: false },
-      verified: { type: "boolean", required: false, immutable: false },
-      recipient: { type: "did", required: true, immutable: true },
+    TotalPointsAggregation: {
+      date: {
+        type: "datetime",
+        required: true,
+        immutable: false,
+        indexed: true,
+      },
+      points: {
+        type: "integer",
+        required: true,
+        immutable: false,
+        indexed: true,
+      },
+      verified: {
+        type: "boolean",
+        required: false,
+        immutable: false,
+        indexed: true,
+      },
+      recipient: {
+        type: "did",
+        required: true,
+        immutable: true,
+        indexed: true,
+      },
       issuer: { type: "view", viewType: "documentAccount" },
     },
   },
@@ -197,20 +217,20 @@ export const definition = {
       type: "connection",
       name: "SimplePointsAllocation",
     },
-    recipientOfTotalPointAggregation: {
+    recipientOfTotalPointsAggregation: {
       type: "account-set",
-      name: "TotalPointAggregation",
+      name: "TotalPointsAggregation",
       property: "recipient",
     },
-    recipientOfTotalPointAggregationList: {
+    recipientOfTotalPointsAggregationList: {
       type: "account",
-      name: "TotalPointAggregation",
+      name: "TotalPointsAggregation",
       property: "recipient",
     },
-    totalPointAggregation: { type: "set", name: "TotalPointAggregation" },
-    totalPointAggregationList: {
+    totalPointsAggregation: { type: "set", name: "TotalPointsAggregation" },
+    totalPointsAggregationList: {
       type: "connection",
-      name: "TotalPointAggregation",
+      name: "TotalPointsAggregation",
     },
   },
 };
