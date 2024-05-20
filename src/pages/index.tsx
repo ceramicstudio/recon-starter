@@ -68,7 +68,7 @@ const AuthShowcase: React.FC = () => {
         setLoggedIn(true);
       });
     }
-  }, [address]);
+  }, [loggedIn, address]);
 
   const fetchData = async () => {
     const session = await getSession();
@@ -277,7 +277,7 @@ const AuthShowcase: React.FC = () => {
             <div className="flex w-full flex-row justify-between p-4">
               <div className="flex w-1/2 flex-col">
                 <h3 className="text-left text-2xl text-white">Your Ranking</h3>
-                {!address && (
+                {!loggedIn && (
                   <p className="mt-4  text-left text-white">
                     Connect your wallet to see your points and ranking.
                   </p>
@@ -288,7 +288,7 @@ const AuthShowcase: React.FC = () => {
                     eligible points.
                   </p>
                 )}
-                {address && aggData && ranking && (
+                {loggedIn && aggData && ranking && (
                   <p className="mt-4  text-left text-white">
                     You are currently ranked{" "}
                     {aggData.aggregations.indexOf(ranking) + 1} out of{" "}
