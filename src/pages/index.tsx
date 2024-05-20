@@ -66,9 +66,7 @@ const AuthShowcase: React.FC = () => {
     if (address) {
       void getRecords(100).then(() => {
         setLoggedIn(true);
-      }
-
-      );
+      });
     }
   }, [address]);
 
@@ -274,59 +272,37 @@ const AuthShowcase: React.FC = () => {
           <p className="m-4 text-left text-2xl text-white">
             Compete with others to earn your spot at the top.
           </p>
-          {!address && (
-            <div className="flex w-full flex-col rounded-lg border-2 border-white p-4">
-              <div className="flex w-full flex-row justify-between p-4">
-                <div className="flex w-1/2 flex-col">
-                  <h3 className="text-left text-2xl text-white">
-                    Your Ranking
-                  </h3>
+
+          <div className="flex w-full flex-col rounded-lg border-2 border-white p-4">
+            <div className="flex w-full flex-row justify-between p-4">
+              <div className="flex w-1/2 flex-col">
+                <h3 className="text-left text-2xl text-white">Your Ranking</h3>
+                {!address && (
                   <p className="mt-4  text-left text-white">
                     Connect your wallet to see your points and ranking.
                   </p>
-                </div>
-                <div className="flex w-1/2 flex-col items-end justify-center">
-                  <w3m-button size="md" balance="hide" />
-                </div>
-              </div>
-            </div>
-          )}
-          {address && aggData && ranking && (
-            <div className="flex w-full flex-col rounded-lg border-2 border-white p-4">
-              <div className="flex w-full flex-row justify-between p-4">
-                <div className="flex w-1/2 flex-col">
-                  <h3 className="text-left text-2xl text-white">
-                    Your Ranking
-                  </h3>
+                )}
+                {((loggedIn && address && aggData && !ranking) ?? !address) && (
+                  <p className="mt-4  text-left text-white">
+                    You are not currently ranked. Complete missions to earn
+                    eligible points.
+                  </p>
+                )}
+                {address && aggData && ranking && (
                   <p className="mt-4  text-left text-white">
                     You are currently ranked{" "}
                     {aggData.aggregations.indexOf(ranking) + 1} out of{" "}
                     {aggData.aggregationCount} participants.
                   </p>
-                </div>
-                <div className="flex w-1/2 flex-col items-end justify-center">
-                  <w3m-button size="md" balance="hide" />
-                </div>
+                )}
+              </div>
+
+              <div className="flex w-1/2 flex-col items-end justify-center">
+                <w3m-button size="md" balance="hide" />
               </div>
             </div>
-          )}
-          {loggedIn && address && aggData && !ranking && (
-            <div className="flex w-full flex-col rounded-lg border-2 border-white p-4">
-              <div className="flex w-full flex-row justify-between p-4">
-                <div className="flex w-1/2 flex-col">
-                  <h3 className="text-left text-2xl text-white">
-                    Your Ranking
-                  </h3>
-                  <p className="mt-4  text-left text-white">
-                    You are not currently ranked. Complete missions to earn eligible points.
-                  </p>
-                </div>
-                <div className="flex w-1/2 flex-col items-end justify-center">
-                  <w3m-button size="md" balance="hide" />
-                </div>
-                </div>
-            </div>
-          )}
+          </div>
+
           {aggData && (
             <>
               <div className="grid grid-cols-6 gap-4 rounded-lg border-2 border-white p-4">
