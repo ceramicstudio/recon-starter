@@ -15,11 +15,16 @@ const questions: Record<string, string> = {
   discordId: "What is your Discord handle? - Discord User ID",
 };
 
-export const saveCustomers = async (input: ScoreInput) => {
+export const saveCustomers = async (
+  input: ScoreInput,
+): Promise<
+  | Array<Record<string, string | number | string[] | boolean>>
+  | { error: string }
+> => {
   try {
     if (!STRING) {
       return {
-        err: "Missing connection string",
+        error: "Missing connection string",
       };
     }
 
@@ -38,6 +43,8 @@ export const saveCustomers = async (input: ScoreInput) => {
     const { rows, startRow } = input;
 
     const saved = [];
+
+    console.log("Writing customers to database...");
     // first start at startRow index while iterating through entry
     for (let i = startRow; i < rows.length; i++) {
       const userAnswers = {} as Record<string, string | string[] | undefined>;

@@ -10,6 +10,7 @@ import {
   writeScoresToPg,
 } from "@/utils/pg/processPgPoints";
 import { getPgTotalCount } from "@/utils/pg/pgAggregationCount";
+import {saveCustomers} from "@/utils/pg/saveCustomer";
 // import { getAggregationCount } from "@/utils/readAggregationCount";
 
 /*
@@ -50,7 +51,15 @@ export default async function handler(req: NextApiRequest, res: Response) {
         .send({ error: "Unable to fetch aggregation data" });
     }
 
-    // first, handle patching of referral scores for existing entries - start by calculating the referral scores
+    // first, save customers to Postgres
+    const customers = await saveCustomers({rows, startRow: aggregations});
+
+    // failure mode for saving customers to Postgres
+    if ("error" in customers) {
+      return res.status(500).send({ error: customers.error });
+    }
+
+    // handle patching of referral scores for existing entries - start by calculating the referral scores
     const finalReferralScores = await calculateReferrals({
       rows,
       startRow: aggregations,
