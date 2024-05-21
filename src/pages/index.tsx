@@ -3,6 +3,7 @@ import {
   type Guilds,
   type Mission,
   type ObjectType,
+  type PgMission,
 } from "@/types";
 import { signIn, useSession, signOut, getSession } from "next-auth/react";
 import Navbar from "@/components/nav";
@@ -131,24 +132,25 @@ const AuthShowcase: React.FC = () => {
         },
       });
       const data = (await response.json()) as
-        | ObjectType[]
+        | PgMission[]
         | undefined
         | { error: string };
       let missionsToSet: Mission[] = [];
       if (data && !("error" in data)) {
         missionsToSet = data.map((mission) => {
           return {
-            id: mission.Order.number,
-            name: mission.Name.title[0].text.content,
-            description: mission.Description.rich_text[0].text.content,
-            points: mission.Points.rich_text[0].text.content,
-            tags: [mission.Difficulty.select?.name ?? "", mission.Duration.select?.name ?? "", mission.Persona.select?.name ?? ""].join(" ").split(" "),
+            id: mission.id,
+            name: mission.name,
+            description: mission.description,
+            points: mission.points,
+            tags: [mission.difficulty, mission.duration, mission.persona]
+              .join(",")
+              .split(","),
           };
         });
         setMissions(missionsToSet);
       }
       console.log(missionsToSet);
-
     } catch (error) {
       console.error(error);
     }
@@ -279,32 +281,35 @@ const AuthShowcase: React.FC = () => {
           Complete missions. Collect points. Earn rewards.{" "}
         </h2>
         <div className="grid grid-cols-3 gap-4 p-4">
-          {(missions?.length) && missions?.map((mission) => (
-            <div
-              className="w-90 relative m-4 h-80 rounded-lg bg-gray-400"
-              key={mission.id}
-            >
-              <div className="text-center text-white">
-                <h3 className="text-1xl mt-4 font-bold text-black">
-                  {mission.name}
-                </h3>
-                <p className="text-md p-3 text-black">{mission.description}</p>
-                <div className="grid grid-cols-3 gap-4 p-4">
-                  {mission.tags?.map((tag) => (
-                    <div
-                      className="rounded-lg bg-[#0f0f0f] bg-opacity-80 p-2 text-sm text-white"
-                      key={tag}
-                    >
-                      {tag}
-                    </div>
-                  ))}
-                </div>
-                <div className="absolute bottom-0 flex h-10 w-full items-center justify-center bg-[#0f0f0f] bg-opacity-30">
-                  <p className="text-md p-3 text-black">{mission.points}</p>
+          {missions?.length &&
+            missions?.map((mission) => (
+              <div
+                className="w-90 relative m-4 h-80 rounded-lg bg-gray-400"
+                key={mission.id}
+              >
+                <div className="text-center text-white">
+                  <h3 className="text-1xl mt-4 font-bold text-black">
+                    {mission.name}
+                  </h3>
+                  <p className="text-md p-3 text-black">
+                    {mission.description}
+                  </p>
+                  <div className="grid grid-cols-3 gap-4 p-4">
+                    {mission.tags?.map((tag) => (
+                      <div
+                        className="rounded-lg bg-[#0f0f0f] bg-opacity-80 p-2 text-sm text-white"
+                        key={tag}
+                      >
+                        {tag}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="absolute bottom-0 flex h-10 w-full items-center justify-center bg-[#0f0f0f] bg-opacity-30">
+                    <p className="text-md p-3 text-black">{mission.points}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
         <div className="flex w-full flex-col justify-center gap-4 p-4">
           <h2 className="m-4 text-left text-4xl text-white">Leaderboard</h2>
