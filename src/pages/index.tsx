@@ -1,11 +1,16 @@
-import { type Extended, type Guilds } from "@/types";
+import {
+  type Extended,
+  type Guilds,
+  type Mission,
+  type ObjectType,
+} from "@/types";
 import { signIn, useSession, signOut, getSession } from "next-auth/react";
 import Navbar from "@/components/nav";
 import Footer from "@/components/footer";
 import Head from "next/head";
 import { useAccount, useSignMessage } from "wagmi";
 import { useEffect, useState } from "react";
-import { missions } from "@/missions/missions";
+// import {missions} from "@/missions/missions";
 
 declare global {
   interface Window {
@@ -47,6 +52,7 @@ const AuthShowcase: React.FC = () => {
   const { signMessageAsync } = useSignMessage();
   const [loggedIn, setLoggedIn] = useState(false);
   const [guilds, setGuilds] = useState<Guilds[] | undefined>(undefined);
+  const [missions, setMissions] = useState<Mission[] | undefined>(undefined);
   const [claim, setClaim] = useState<boolean>(false);
   const [access, setAccess] = useState<string>("");
   const [score, setScore] = useState<number | undefined>(undefined);
@@ -63,6 +69,7 @@ const AuthShowcase: React.FC = () => {
   >(undefined);
 
   useEffect(() => {
+    void getMissions();
     if (address) {
       void getRecords(100).then(() => {
         setLoggedIn(true);
@@ -110,6 +117,38 @@ const AuthShowcase: React.FC = () => {
         );
       }
       return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getMissions = async () => {
+    try {
+      const response = await fetch("/api/missions", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = (await response.json()) as
+        | ObjectType[]
+        | undefined
+        | { error: string };
+      let missionsToSet: Mission[] = [];
+      if (data && !("error" in data)) {
+        missionsToSet = data.map((mission) => {
+          return {
+            id: mission.Order.number,
+            name: mission.Name.title[0].text.content,
+            description: mission.Description.rich_text[0].text.content,
+            points: mission.Points.rich_text[0].text.content,
+            tags: [mission.Difficulty.select?.name ?? "", mission.Duration.select?.name ?? "", mission.Persona.select?.name ?? ""].join(" ").split(" "),
+          };
+        });
+        setMissions(missionsToSet);
+      }
+      console.log(missionsToSet);
+
     } catch (error) {
       console.error(error);
     }
@@ -240,7 +279,7 @@ const AuthShowcase: React.FC = () => {
           Complete missions. Collect points. Earn rewards.{" "}
         </h2>
         <div className="grid grid-cols-3 gap-4 p-4">
-          {missions.map((mission) => (
+          {(missions?.length) && missions?.map((mission) => (
             <div
               className="w-90 relative m-4 h-80 rounded-lg bg-gray-400"
               key={mission.id}

@@ -35,6 +35,8 @@ export const env = createEnv({
     DEFORM_FORM_ID: z.string(),
     ANSWERS: z.string(),
     ALCHEMY_API_KEY: z.string(),
+    NOTION_SECRET: z.string(),
+    NOTION_DATABASE_ID: z.string(),
     //optional
     DISCORD_CLIENT_ID: z.string().optional(),
     DISCORD_CLIENT_SECRET: z.string().optional(),
@@ -89,6 +91,8 @@ export const env = createEnv({
     DEFORM_FORM_ID: process.env.DEFORM_FORM_ID,
     ANSWERS: process.env.ANSWERS,
     ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY,
+    NOTION_SECRET: process.env.NOTION_SECRET,
+    NOTION_DATABASE_ID: process.env.NOTION_DATABASE_ID,
     NEXT_PUBLIC_PROJECT_ID: process.env.NEXT_PUBLIC_PROJECT_ID,
   },
   /**

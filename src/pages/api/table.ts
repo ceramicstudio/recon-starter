@@ -48,7 +48,7 @@
 //     verified boolean)
 // `;
 
-// const PersonTableString = `
+//     const PersonTableString = `
 //   CREATE TABLE customers (
 //     id SERIAL PRIMARY KEY,
 //     participant text[],
@@ -59,6 +59,23 @@
 //     address text,
 //     discordHandle text,
 //     discordId text)
+// `;
+
+//     const MissionsQueryString = `
+//   CREATE TABLE missions (
+//     id SERIAL PRIMARY KEY,
+//     name text UNIQUE,
+//     description text,
+//     points text,
+//     difficulty text,
+//     persona text,
+//     duration text,
+//     frequency text,
+//     season text,
+//     startDate text,
+//     active boolean,
+//     featured boolean,
+//     url text)
 // `;
 
 //     const ContextPointAllocationString = `
@@ -84,6 +101,7 @@
 //     await client.query(ContextPointAllocationString);
 //     await client.query(SimplePointAllocationString);
 //     await client.query(PersonTableString);
+//     await client.query(MissionsQueryString);
 
 //     const vals = await client.query("SELECT * FROM pg_catalog.pg_tables");
 //     await client.end();

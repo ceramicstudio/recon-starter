@@ -65,16 +65,16 @@ export interface PointsContent {
 
 export interface AggTotalContent {
   node: {
-  recipient: {
+    recipient: {
+      id: string;
+    };
+    issuer: {
+      id: string;
+    };
+    verified: boolean | null;
+    date: string;
+    points: number;
     id: string;
-  };
-  issuer: {
-    id: string;
-  };
-  verified: boolean | null;
-  date: string;
-  points: number;
-  id: string;
   };
 }
 
@@ -151,3 +151,136 @@ export interface DeformResponse {
 export interface Extended extends PgTotalAggregation {
   ens?: string;
 }
+
+type RichTextAnnotation = {
+  bold: boolean;
+  italic: boolean;
+  strikethrough: boolean;
+  underline: boolean;
+  code: boolean;
+  color: string;
+};
+
+type RichTextContent = {
+  type: string;
+  text: {
+    content: string;
+    link: string | null;
+  };
+  annotations: RichTextAnnotation;
+  plain_text: string;
+  href: string | null;
+};
+
+type SelectOption = {
+  id: string;
+  name: string;
+  color: string;
+};
+
+type DateType = {
+  start: string;
+  end: string | null;
+  time_zone: string | null;
+};
+
+export interface Property {
+  id: string;
+  type: string;
+  select?: SelectOption;
+  rich_text?: RichTextContent[];
+  date?: DateType;
+  checkbox?: boolean;
+  url?: string | null;
+  title?: RichTextContent[];
+  number?: number;
+}
+
+export interface ObjectType {
+  Difficulty: {
+    id: string;
+    type: string;
+    select: SelectOption;
+  }
+  Description: {
+    id: string;
+    type: string;
+    rich_text: RichTextContent[];
+  }
+  Season: {
+    id: string;
+    type: string;
+    select: SelectOption;
+  }
+  Start: {
+    id: string;
+    type: string;
+    date: DateType | null;
+  }
+  Active: {
+    id: string;
+    type: string;
+    checkbox: boolean;
+  }
+  Persona: {
+    id: string;
+    type: string;
+    select: SelectOption;
+  }
+  Duration: {
+    id: string;
+    type: string;
+    select: SelectOption;
+  }
+  Points: {
+    id: string;
+    type: string;
+    rich_text: RichTextContent[];
+  }
+  URL: {
+    id: string;
+    type: string;
+    url: string | null;
+  }
+  Featured: {
+    id: string;
+    type: string;
+    checkbox: boolean;
+  }
+  Frequency: {
+    id: string;
+    type: string;
+    select: SelectOption;
+  }
+  Name: {
+    id: string;
+    type: string;
+    title: RichTextContent[];
+  }
+  Order: Property;
+};
+
+export interface Mission {
+  id: number;
+  name: string;
+  description: string;
+  points: string;
+  tags: string[];
+}
+
+export interface PgMission {
+  id: number;
+  name: string;
+  description: string;
+  points: string;
+  difficulty: string;
+  persona: string;
+  duration: string;
+  frequency: string;
+  season: string;
+  startDate: string;
+  active: boolean;
+  featured: boolean;
+  url?: string;
+}
+
