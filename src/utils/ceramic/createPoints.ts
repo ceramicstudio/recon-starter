@@ -6,6 +6,7 @@ import {
   type AllocationContent,
   type SinglePointsRequest,
   type RecipientScore,
+  type AggTotalContent,
 } from "@/types";
 import { getAggregation } from "@/utils/ceramic/readAggregations";
 
@@ -99,6 +100,42 @@ export const createPoints = async (score: RecipientScore) => {
         : 0,
       total: updatedTotalAgg.content ? updatedTotalAgg.content.points : 0,
       allocationDoc: allocation?.content ?? undefined,
+    };
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+};
+
+export const createPatchedTotalAgg = async (
+  recipient: string,
+  date: string,
+  points: number,
+  verified: boolean | null,
+): Promise<AggregationContent | undefined> => {
+  try {
+    // update total aggregation
+    const updatedTotalAgg: ModelInstanceDocument<AggregationContent> =
+      await writer.updatePointsAggregationFor([recipient], (content) => {
+        return verified !== null
+          ? {
+              points: content ? content.points + points : points,
+              date,
+              recipient,
+              verified,
+            }
+          : {
+              points: content ? content.points + points : points,
+              date,
+              recipient,
+            };
+      });
+    return {
+      points: updatedTotalAgg.content ? updatedTotalAgg.content.points : 0,
+      date: updatedTotalAgg.content ? updatedTotalAgg.content.date : "",
+      recipient: updatedTotalAgg.content
+        ? updatedTotalAgg.content.recipient
+        : "",
     };
   } catch (error) {
     console.error(error);

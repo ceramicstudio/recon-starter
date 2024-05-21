@@ -1,18 +1,18 @@
 import { patchAggTotals } from "@/utils/patching/patchAggTotals";
-import {NextApiRequest, NextApiResponse} from "next";
+import { type NextApiRequest, type NextApiResponse } from "next";
 
 interface Response extends NextApiResponse {
   status(code: number): Response;
   send(
     data:
       | { score: string; address: string; last_score_timestamp: string }
-      | Error,
+      | { error: string },
   ): void;
 }
 
 export default async function handler(req: NextApiRequest, res: Response) {
   try {
-    const data = await patchAggTotals()
+    const data = await patchAggTotals();
     res.status(200).json(data);
   } catch (error) {
     console.error(error);

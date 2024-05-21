@@ -1,11 +1,11 @@
 import { composeClient, issuer } from "@/utils/ceramic/context";
-import { type PgTotalAggregation } from "@/types";
+import { type AggTotalContent } from "@/types";
 
 export const readAggTotals = async ({
   recipients,
 }: {
   recipients: string[];
-}): Promise<PgTotalAggregation[] | undefined> => {
+}): Promise<AggTotalContent[] | undefined> => {
   try {
     const filterString = recipients
       .map((recipient, index) => {
@@ -19,7 +19,7 @@ export const readAggTotals = async ({
     const aggregations = await composeClient.executeQuery<{
       node: {
         totalPointsAggregationList: {
-          edges: PgTotalAggregation[];
+          edges: AggTotalContent[];
         };
       };
     }>(`

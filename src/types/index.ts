@@ -63,6 +63,21 @@ export interface PointsContent {
   date: string;
 }
 
+export interface AggTotalContent {
+  node: {
+  recipient: {
+    id: string;
+  };
+  issuer: {
+    id: string;
+  };
+  verified: boolean | null;
+  date: string;
+  points: number;
+  id: string;
+  };
+}
+
 export interface AllocationContent {
   recipient: string;
   points: number;
