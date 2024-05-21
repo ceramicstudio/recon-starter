@@ -6,7 +6,6 @@ import {
   type AllocationContent,
   type SinglePointsRequest,
   type RecipientScore,
-  type AggTotalContent,
 } from "@/types";
 import { getAggregation } from "@/utils/ceramic/readAggregations";
 
