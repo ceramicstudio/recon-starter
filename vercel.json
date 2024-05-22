@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/general",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/updateMissions",
+      "schedule": "*/10 * * * *"
     }
   ]
 }

@@ -137,17 +137,28 @@ const AuthShowcase: React.FC = () => {
         | { error: string };
       let missionsToSet: Mission[] = [];
       if (data && !("error" in data)) {
-        missionsToSet = data.map((mission) => {
-          return {
-            id: mission.id,
-            name: mission.name,
-            description: mission.description,
-            points: mission.points,
-            tags: [mission.difficulty, mission.duration, mission.persona]
-              .join(",")
-              .split(","),
-          };
-        });
+        missionsToSet = data
+          .map((mission) => {
+            return {
+              id: mission.id,
+              name: mission.name,
+              description: mission.description,
+              points: mission.points,
+              tags: [mission.difficulty, mission.duration, mission.persona]
+                .join(",")
+                .split(","),
+              startdate: mission.startdate,
+              active: mission.active,
+            };
+          })
+          //then sort by startDate
+          .sort((a, b) => {
+            return (
+              new Date(a.startdate).getTime() - new Date(b.startdate).getTime()
+            );
+          });
+        // then filter by active
+        missionsToSet = missionsToSet.filter((mission) => mission.active);
         setMissions(missionsToSet);
       }
       console.log(missionsToSet);

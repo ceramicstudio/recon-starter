@@ -266,6 +266,8 @@ export interface Mission {
   description: string;
   points: string;
   tags: string[];
+  startdate: string;
+  active: boolean;
 }
 
 export interface PgMission {
@@ -278,7 +280,7 @@ export interface PgMission {
   duration: string;
   frequency: string;
   season: string;
-  startDate: string;
+  startdate: string;
   active: boolean;
   featured: boolean;
   url?: string;
