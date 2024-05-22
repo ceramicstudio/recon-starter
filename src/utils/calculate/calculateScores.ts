@@ -36,7 +36,7 @@ export const calculate = async (
 
         // if the answer matches the correct answer, increment the score
         if (correctAnswer === userAnswer) {
-          score += 20;
+          score += 60;
         }
       }
       // find the wallet address
@@ -97,6 +97,12 @@ export const calculate = async (
           context: `Email`,
         });
       }
+      // add rewards for connecting address
+      recipientScores.push({
+        recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
+        score: 50,
+        context: `Wallet`,
+      });
       // reset the score
       score = 0;
     }

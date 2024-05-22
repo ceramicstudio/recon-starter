@@ -76,6 +76,10 @@ const AuthShowcase: React.FC = () => {
         setLoggedIn(true);
       });
     }
+    if(!address) {
+      setLoggedIn(false);
+      setRanking(undefined);
+    }
   }, [loggedIn, address]);
 
   const fetchData = async () => {
@@ -159,9 +163,10 @@ const AuthShowcase: React.FC = () => {
             );
           });
         // then filter by active
-        missionsToSet = missionsToSet.filter((mission) => mission.active)
-        // since this is the homepage, we only show featured missions
-        .filter((mission) => mission.featured);
+        missionsToSet = missionsToSet
+          .filter((mission) => mission.active)
+          // since this is the homepage, we only show featured missions
+          .filter((mission) => mission.featured);
         setMissions(missionsToSet);
       }
       console.log(missionsToSet);
@@ -348,7 +353,8 @@ const AuthShowcase: React.FC = () => {
                 )}
                 {loggedIn && aggData && ranking && (
                   <p className="mt-4  text-left text-white">
-                    You are currently ranked{" "}
+                    You&apos;ve earned {ranking.points ? ranking.points : "0"}{" "}
+                    points and are currently ranked{" "}
                     {aggData.aggregations.indexOf(ranking) + 1} out of{" "}
                     {aggData.aggregationCount} participants.
                   </p>
@@ -359,6 +365,49 @@ const AuthShowcase: React.FC = () => {
                 <w3m-button size="md" balance="hide" />
               </div>
             </div>
+            {ranking && aggData && (
+              <div className="grid grid-cols-6 gap-4 rounded-lg  p-4">
+                <div className="flex w-full flex-col justify-between p-4">
+                  <p className="mb-4 text-center text-white">Account (DID)</p>
+
+                  <p className="text-center text-white">
+                    {ranking.recipient.slice(0, 7) +
+                      "..." +
+                      ranking.recipient.slice(-10)}
+                  </p>
+                </div>
+                <div className="flex w-full flex-col justify-between p-4">
+                  <p className="mb-4 text-center text-white">Wallet Address</p>
+
+                  <p className="text-center text-white">{ranking.ens}</p>
+                </div>
+                <div className="flex w-full flex-col justify-between p-4">
+                  <p className="mb-4 text-center text-white">Rank</p>
+
+                  <p className="text-center text-white">
+                    {aggData.aggregations.indexOf(ranking) + 1}
+                  </p>
+                </div>
+                <div className="flex w-full flex-col justify-between p-4">
+                  <p className="mb-4 text-center text-white">Points</p>
+
+                  <p className="text-center text-white">{ranking.points}</p>
+                </div>
+                <div className="flex w-full flex-col justify-between p-4">
+                  <p className="mb-4 text-center text-white">Last Active</p>
+
+                  <p className="text-center text-white">
+                    {new Date(ranking.date).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="flex w-full flex-col justify-between p-4">
+                  <p className="mb-4 text-center text-white">Verification</p>
+                  <p className="text-center text-white">
+                    {ranking.verified ? "Verified" : "Unverified"}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {aggData && (
