@@ -149,6 +149,7 @@ const AuthShowcase: React.FC = () => {
                 .split(","),
               startdate: mission.startdate,
               active: mission.active,
+              featured: mission.featured,
             };
           })
           //then sort by startDate
@@ -158,7 +159,9 @@ const AuthShowcase: React.FC = () => {
             );
           });
         // then filter by active
-        missionsToSet = missionsToSet.filter((mission) => mission.active);
+        missionsToSet = missionsToSet.filter((mission) => mission.active)
+        // since this is the homepage, we only show featured missions
+        .filter((mission) => mission.featured);
         setMissions(missionsToSet);
       }
       console.log(missionsToSet);

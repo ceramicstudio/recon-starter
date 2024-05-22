@@ -267,6 +267,7 @@ export interface Mission {
   points: string;
   tags: string[];
   startdate: string;
+  featured: boolean;
   active: boolean;
 }
 
