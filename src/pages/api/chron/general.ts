@@ -2,7 +2,7 @@ import { type Error, type Message, type NewPoints } from "@/types";
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { processSingleContextPoints } from "@/utils/ceramic/processSingleContextPoints";
 import { calculate } from "@/utils/calculate/calculateScores";
-import { getDeform } from "@/utils/getDeformData";
+import { getDeform } from "@/utils/deform/getDeformData";
 import { calculateReferrals } from "@/utils/calculate/calculateReferrals";
 import { processReferralPoints } from "@/utils/ceramic/processReferralPoints";
 import {
@@ -10,9 +10,12 @@ import {
   writeScoresToPg,
 } from "@/utils/pg/processPgPoints";
 import { getPgTotalCount } from "@/utils/pg/pgAggregationCount";
-import {saveCustomers} from "@/utils/pg/saveCustomer";
+import { saveCustomers } from "@/utils/pg/saveCustomer";
+import { curly } from "node-libcurl";
 // import { getAggregationCount } from "@/utils/readAggregationCount";
 
+const CERAMIC_API = process.env.CERAMIC_API ?? "";
+const DEFORM_FORM_ID = process.env.DEFORM_FORM_ID ?? "";
 /*
 NOTE: current implementation uses Postgres as the source of truth, and prioritizes writing to Postgres first.
 */
@@ -24,8 +27,14 @@ interface Response extends NextApiResponse {
 
 export default async function handler(req: NextApiRequest, res: Response) {
   try {
+    // check if ceramic is up
+    const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
+    if (data.statusCode !== 200 || data.data !== "Alive!") {
+      return res.status(500).send({ error: "Ceramic is down" });
+    }
+
     // fetch the DeForm data
-    const rows = await getDeform().then((data) => {
+    const rows = await getDeform(DEFORM_FORM_ID).then((data) => {
       return data?.data;
     });
 
@@ -52,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: Response) {
     }
 
     // first, save customers to Postgres
-    const customers = await saveCustomers({rows, startRow: aggregations});
+    const customers = await saveCustomers({ rows, startRow: aggregations });
 
     // failure mode for saving customers to Postgres
     if ("error" in customers) {

@@ -2,9 +2,8 @@ import { type DeformResponse } from "@/types";
 
 const DEFORM_API_KEY = process.env.DEFORM_API_KEY ?? "";
 const DEFORM_ID = process.env.DEFORM_ID ?? "";
-const DEFORM_FORM_ID = process.env.DEFORM_FORM_ID ?? "";
 
-export const getDeform = async (): Promise<DeformResponse | undefined> => {
+export const getDeform = async (DEFORM_FORM_ID: string): Promise<DeformResponse | undefined> => {
   try {
     const base64Credentials = btoa(DEFORM_ID + ":" + DEFORM_API_KEY);
     const headers = new Headers({

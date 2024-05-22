@@ -22,11 +22,13 @@
     "googleapis": "^105.0.0",
     "next": "^14.2.1",
     "next-auth": "^4.24.6",
+    "node-libcurl": "^4.0.0",
     "pg": "8.6.0",
     "react": "18.2.0",
     "react-device-detect": "^2.2.3",
     "react-dom": "18.2.0",
     "tsx": "^4.9.3",
+    "twitter-api-sdk": "^1.2.1",
     "viem": "^1.12.2",
     "wagmi": "^1.4.2",
     "zod": "^3.22.4"

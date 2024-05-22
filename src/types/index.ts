@@ -196,69 +196,100 @@ export interface Property {
   number?: number;
 }
 
+export interface NotionViralType {
+  Username: {
+    id: string;
+    type: string;
+    rich_text: RichTextContent[];
+  };
+  Body: {
+    id: string;
+    type: string;
+    rich_text: RichTextContent[];
+  };
+  Likes: {
+    id: string;
+    type: string;
+    number: number;
+  };
+  Helpful: {
+    id: string;
+    type: string;
+    checkbox: boolean;
+  };
+  Approver: {
+    id: string;
+    type: string;
+    people: {
+      object: string;
+      id: string;
+    };
+  };
+}
+
 export interface ObjectType {
   Difficulty: {
     id: string;
     type: string;
     select: SelectOption;
-  }
+  };
   Description: {
     id: string;
     type: string;
     rich_text: RichTextContent[];
-  }
+  };
   Season: {
     id: string;
     type: string;
     select: SelectOption;
-  }
+  };
   Start: {
     id: string;
     type: string;
     date: DateType | null;
-  }
+  };
   Active: {
     id: string;
     type: string;
     checkbox: boolean;
-  }
+  };
   Persona: {
     id: string;
     type: string;
     select: SelectOption;
-  }
+  };
   Duration: {
     id: string;
     type: string;
     select: SelectOption;
-  }
+  };
   Points: {
     id: string;
     type: string;
     rich_text: RichTextContent[];
-  }
+  };
   URL: {
     id: string;
     type: string;
     url: string | null;
-  }
+  };
   Featured: {
     id: string;
     type: string;
     checkbox: boolean;
-  }
+  };
   Frequency: {
     id: string;
     type: string;
     select: SelectOption;
-  }
+  };
   Name: {
     id: string;
     type: string;
     title: RichTextContent[];
-  }
+  };
   Order: Property;
-};
+}
 
 export interface Mission {
   id: number;
@@ -287,3 +318,23 @@ export interface PgMission {
   url?: string;
 }
 
+export interface XLikesResponse {
+  data: {
+    id: string;
+    name: string;
+    username: string;
+  }[];
+  meta: {
+    result_count: number;
+
+    next_token: string;
+  };
+}
+
+export interface XTweetResponse {
+  data: {
+    edit_history_tweet_ids: string[];
+    id: string;
+    text: string;
+  };
+}

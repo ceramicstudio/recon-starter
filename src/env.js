@@ -33,10 +33,13 @@ export const env = createEnv({
     DEFORM_API_KEY: z.string(),
     DEFORM_ID: z.string(),
     DEFORM_FORM_ID: z.string(),
+    DEFORM_VIRAL_FORM_ID: z.string(),
     ANSWERS: z.string(),
     ALCHEMY_API_KEY: z.string(),
     NOTION_SECRET: z.string(),
     NOTION_DATABASE_ID: z.string(),
+    X_BEARER_TOKEN: z.string(),
+    NOTION_VIRAL_DATABASE_ID: z.string(),
     //optional
     DISCORD_CLIENT_ID: z.string().optional(),
     DISCORD_CLIENT_SECRET: z.string().optional(),
@@ -94,6 +97,9 @@ export const env = createEnv({
     NOTION_SECRET: process.env.NOTION_SECRET,
     NOTION_DATABASE_ID: process.env.NOTION_DATABASE_ID,
     NEXT_PUBLIC_PROJECT_ID: process.env.NEXT_PUBLIC_PROJECT_ID,
+    X_BEARER_TOKEN: process.env.X_BEARER_TOKEN,
+    NOTION_VIRAL_DATABASE_ID: process.env.NOTION_VIRAL_DATABASE_ID,
+    DEFORM_VIRAL_FORM_ID: process.env.DEFORM_VIRAL_FORM_ID,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
