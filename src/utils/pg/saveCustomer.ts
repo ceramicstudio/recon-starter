@@ -5,14 +5,13 @@ const STRING = process.env.DATABASE_URL;
 const { Client, Pool } = pg;
 
 const questions: Record<string, string> = {
-  participant: "How would you like to participate in the ecosystem?",
-  technical: "Are you technical?",
-  excitement: "On a scale of 1-10, how excited are you about what ADM?",
-  xUsername: "What is your X username? - Twitter Username",
+  participant: "How would you like to participate in the Atlas community?",
+  excitement: "On a scale of 1-10, how excited are you about Atlas?",
+  xUsername: "Connect your X account. - Twitter Username",
   email: "What is your email address?",
   address: "What is your wallet address? - Wallet Address",
-  discordHandle: "What is your Discord handle? - Discord Display Name",
-  discordId: "What is your Discord handle? - Discord User ID",
+  discordHandle: "Connect your Discord account. - Discord Display Name",
+  discordId: "Connect your Discord account. - Discord User ID",
 };
 
 export const saveCustomers = async (
@@ -57,10 +56,9 @@ export const saveCustomers = async (
         const answer = answers?.find((answer) => answer.name === question);
         userAnswers[key] = answer?.value;
       }
-      const saveCustomerQuery = `INSERT INTO customers (participant, technical, excitement, xUsername, email, address, discordHandle, discordId) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`;
+      const saveCustomerQuery = `INSERT INTO customers (participant, excitement, xUsername, email, address, discordHandle, discordId) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
       const saveCustomer = await client.query(saveCustomerQuery, [
         userAnswers.participant,
-        userAnswers.technical ? userAnswers.technical[0] === "Yes" : false,
         Number(userAnswers.excitement),
         userAnswers.xUsername,
         userAnswers.email,

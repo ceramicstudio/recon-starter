@@ -45,6 +45,24 @@ export const calculate = async (
           answer.name === "What is your wallet address? - Wallet Address",
       )?.value;
 
+      // find Discord handle
+      const discord = answers?.find(
+        (answer) =>
+          answer.name ===
+          "Connect your Discord account. - Discord Display Name",
+      )?.value;
+
+      // find Twitter handle
+      const twitter = answers?.find(
+        (answer) =>
+          answer.name === "Connect your X account. - Twitter Username",
+      )?.value;
+
+      // find email
+      const email = answers?.find(
+        (answer) => answer.name === "What is your email address?",
+      )?.value;
+
       if (!address || typeof address !== "string") {
         return { error: "Internal Server Error" };
       }
@@ -56,26 +74,29 @@ export const calculate = async (
       });
 
       // add the rewards for connecting X
-      recipientScores.push({
-        recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
-        score: 50,
-        context: `Twitter`,
-      });
-
+      if (twitter && typeof twitter === "string" && twitter.length > 0) {
+        recipientScores.push({
+          recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
+          score: 50,
+          context: `Twitter`,
+        });
+      }
       // add the rewards for connecting Discord
-      recipientScores.push({
-        recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
-        score: 50,
-        context: `Discord`,
-      });
-
+      if (discord && typeof discord === "string" && discord.length > 0) {
+        recipientScores.push({
+          recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
+          score: 50,
+          context: `Discord`,
+        });
+      }
       // add the rewards for subscribing email
-      recipientScores.push({
-        recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
-        score: 50,
-        context: `Email`,
-      });
-
+      if (email && typeof email === "string" && email.length > 0) {
+        recipientScores.push({
+          recipient: `did:pkh:eip155:1:${address.toLowerCase()}`,
+          score: 50,
+          context: `Email`,
+        });
+      }
       // reset the score
       score = 0;
     }

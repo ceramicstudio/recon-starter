@@ -52,7 +52,6 @@
 //   CREATE TABLE customers (
 //     id SERIAL PRIMARY KEY,
 //     participant text[],
-//     technical boolean,
 //     excitement integer,
 //     xUsername text,
 //     email text,
