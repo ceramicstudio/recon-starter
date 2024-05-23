@@ -1,11 +1,11 @@
-import { type ObjectType, type NotionViralType } from "@/types";
+import { type ObjectType, type NotionFeedbackType } from "@/types";
 
 const NOTION_SECRET = process.env.NOTION_SECRET ?? "";
 
 export const getNotion = async (
   NOTION_DATABASE_ID: string,
   campaign: string,
-): Promise<ObjectType[] | NotionViralType[] | undefined> => {
+): Promise<ObjectType[] | NotionFeedbackType[] | undefined> => {
   try {
     const headers = new Headers({
       Authorization: "Bearer " + NOTION_SECRET,
@@ -22,7 +22,7 @@ export const getNotion = async (
     );
 
     const entries: ObjectType[] = [];
-    const viralEntries: NotionViralType[] = [];
+    const viralEntries: NotionFeedbackType[] = [];
 
     if (campaign === "Onboarding") {
       await response.json().then(
@@ -42,12 +42,12 @@ export const getNotion = async (
         },
       );
       return entries;
-    } else if (campaign === "Viral") {
+    } else if (campaign === "Feedback") {
       await response.json().then(
         (data: {
           results?:
             | {
-                properties: NotionViralType;
+                properties: NotionFeedbackType;
               }[]
             | undefined;
         }) => {

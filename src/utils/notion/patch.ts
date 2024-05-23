@@ -1,12 +1,12 @@
-import { type NotionViralType, type NotionViralEntry } from "@/types";
+import { type NotionFeedbackType, type NotionFeedbackEntry } from "@/types";
 
 const NOTION_SECRET = process.env.NOTION_SECRET ?? "";
 
 export const patchNotion = async (
   NOTION_DATABASE_ID: string,
   campaign: string,
-  data: NotionViralEntry,
-): Promise<NotionViralType | undefined> => {
+  data: NotionFeedbackEntry,
+): Promise<NotionFeedbackType | undefined> => {
   try {
     const headers = new Headers({
       Authorization: "Bearer " + NOTION_SECRET,
@@ -23,7 +23,7 @@ export const patchNotion = async (
       }),
     });
 
-    const entries = (await response.json()) as NotionViralType;
+    const entries = (await response.json()) as NotionFeedbackType;
     return entries;
   } catch (error) {
     console.error(error);

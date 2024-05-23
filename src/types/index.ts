@@ -196,8 +196,8 @@ export interface Property {
   number?: number;
 }
 
-export interface NotionViralType {
-  Username: {
+export interface NotionFeedbackType {
+  Categories: {
     id: string;
     type: string;
     rich_text: RichTextContent[];
@@ -207,62 +207,80 @@ export interface NotionViralType {
     type: string;
     rich_text: RichTextContent[];
   };
-  Body: {
+  Email: {
     id: string;
     type: string;
     rich_text: RichTextContent[];
   };
-  Likes: {
+  Experience: {
     id: string;
     type: string;
     number: number;
   };
-  Helpful: {
+  Feedback: {
     id: string;
     type: string;
-    checkbox: boolean;
+    rich_text: RichTextContent[];
   };
-  Approver: {
+  Participation: {
     id: string;
     type: string;
-    people: {
-      object: string;
-      id: string;
-    };
+    rich_text: RichTextContent[];
+  };
+  Helpful: {
+    checkbox: boolean;
   };
 }
 
-export interface NotionViralEntry {
-  Username: {
-    title: [
+export interface NotionFeedbackEntry {
+  Categories: {
+    rich_text: [
       {
         text: {
-          content: string,
-        },
+          content: string;
+        };
       },
-    ],
-  },
+    ];
+  };
   Wallet: {
     rich_text: [
       {
         text: {
-          content: string,
-        },
+          content: string;
+        };
       },
-    ],
-  },
-  Body: {
+    ];
+  };
+  Email: {
     rich_text: [
       {
         text: {
-          content: string,
-        },
+          content: string;
+        };
       },
-    ],
-  },
-  Likes: {
-    number: number,
-  },
+    ];
+  };
+  Experience: {
+    number: number;
+  };
+  Feedback: {
+    rich_text: [
+      {
+        text: {
+          content: string;
+        };
+      },
+    ];
+  };
+  Participation: {
+    title: [
+      {
+        text: {
+          content: string;
+        };
+      },
+    ];
+  };
 }
 
 export interface ObjectType {
