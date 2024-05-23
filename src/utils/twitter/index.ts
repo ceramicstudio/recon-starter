@@ -9,6 +9,7 @@ export const getTweet = async (
   | {
       tweetData: XTweetResponse;
       likes: XLikesResponse;
+      account: string;
     }
   | undefined
 > => {
@@ -38,6 +39,7 @@ export const getTweet = async (
     return {
       tweetData,
       likes,
+      account,
     };
   } catch (error) {
     console.error(error);

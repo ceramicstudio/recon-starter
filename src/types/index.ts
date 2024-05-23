@@ -202,6 +202,11 @@ export interface NotionViralType {
     type: string;
     rich_text: RichTextContent[];
   };
+  Wallet: {
+    id: string;
+    type: string;
+    rich_text: RichTextContent[];
+  };
   Body: {
     id: string;
     type: string;
@@ -225,6 +230,39 @@ export interface NotionViralType {
       id: string;
     };
   };
+}
+
+export interface NotionViralEntry {
+  Username: {
+    title: [
+      {
+        text: {
+          content: string,
+        },
+      },
+    ],
+  },
+  Wallet: {
+    rich_text: [
+      {
+        text: {
+          content: string,
+        },
+      },
+    ],
+  },
+  Body: {
+    rich_text: [
+      {
+        text: {
+          content: string,
+        },
+      },
+    ],
+  },
+  Likes: {
+    number: number,
+  },
 }
 
 export interface ObjectType {
