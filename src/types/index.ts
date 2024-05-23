@@ -17,6 +17,7 @@ export interface SinglePointsRequest {
   amount: number;
   context: string;
   multiplier?: number;
+  subContext?: string;
 }
 
 export interface NewPoints {
