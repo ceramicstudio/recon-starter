@@ -182,7 +182,7 @@ export default async function handler(
     }
     // process and write the patches to Postgres
     const pgResults = await writeScoresToPg(recipientScores);
-    console.log("Processed PG viral patches: ", pgResults);
+    console.log("Processed PG feedback patches: ", pgResults);
 
     // process and write the patches to Ceramic
     const results = await processSingleContextPoints(recipientScores);
