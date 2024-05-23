@@ -40,6 +40,7 @@ export const env = createEnv({
     NOTION_DATABASE_ID: z.string(),
     X_BEARER_TOKEN: z.string(),
     NOTION_VIRAL_DATABASE_ID: z.string(),
+    X_PLATFORM_HANDLE: z.string(),
     //optional
     DISCORD_CLIENT_ID: z.string().optional(),
     DISCORD_CLIENT_SECRET: z.string().optional(),
@@ -100,6 +101,7 @@ export const env = createEnv({
     X_BEARER_TOKEN: process.env.X_BEARER_TOKEN,
     NOTION_VIRAL_DATABASE_ID: process.env.NOTION_VIRAL_DATABASE_ID,
     DEFORM_VIRAL_FORM_ID: process.env.DEFORM_VIRAL_FORM_ID,
+    X_PLATFORM_HANDLE: process.env.X_PLATFORM_HANDLE,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

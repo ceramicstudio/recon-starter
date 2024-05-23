@@ -1,39 +1,37 @@
-import { getNotion } from "@/utils/notion/index";
-import { patchNotion } from "@/utils/notion/patch";
 import { getTweet } from "@/utils/twitter/index";
 import { getDeform } from "@/utils/deform/getDeformData";
-import { type NextApiRequest, type NextApiResponse } from "next";
-import { type NotionViralType, type NotionViralEntry } from "@/types";
+import { type NextApiResponse } from "next";
+import { getPgContextCount } from "@/utils/pg/pgContextCount";
+import { type RecipientScore } from "@/types";
+import { writeScoresToPg } from "@/utils/pg/processPgPoints";
+import { processSingleContextPoints } from "@/utils/ceramic/processSingleContextPoints";
+import { curly } from "node-libcurl";
 
-const NOTION_VIRAL_DATABASE_ID = process.env.NOTION_VIRAL_DATABASE_ID ?? "";
 const DEFORM_VIRAL_FORM_ID = process.env.DEFORM_VIRAL_FORM_ID ?? "";
+const X_PLATFORM_HANDLE = process.env.X_PLATFORM_HANDLE ?? "";
+const CERAMIC_API = process.env.CERAMIC_API ?? "";
 
-// interface Response extends NextApiResponse {
-//   status(code: number): Response;
-//   send(data: ObjectType[] | undefined | { error: string }): void;
-// }
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(res: NextApiResponse) {
   try {
-    const notionData = (await getNotion(
-      NOTION_VIRAL_DATABASE_ID,
-      "Viral",
-    )) as NotionViralType[];
+    // check if ceramic is up
+    const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
+    if (data.statusCode !== 200 || data.data !== "Alive!") {
+      return res.status(500).send({ error: "Ceramic is down" });
+    }
+
     const deformData = await getDeform(DEFORM_VIRAL_FORM_ID).then((data) => {
       return data?.data;
     });
 
-    // failure mode for fetching Notion or DeForm data
-    if (!notionData || !deformData) {
+    const aggregationData = await getPgContextCount("viral");
+    // failure mode for fetching DeForm data or aggregation data
+    if (!deformData || !aggregationData) {
       return res.status(500).send({ error: "Internal Server Error" });
     }
 
-    // first, see if there is a difference between the number of rows in the Notion database and the number of rows in the DeForm database
-    const difference = deformData.length - notionData.length;
-    const returnEntries: NotionViralType[] = [];
+    // first, see if there is a difference between the number of rows in the PG database and the number of rows in the DeForm database
+    const difference = deformData.length - aggregationData.aggregationCount;
+    const recipientScores = [] as Array<RecipientScore>;
     // if there is a difference, then we need to update the Notion database
     if (difference > 0) {
       for (let i = 0; i < difference; i++) {
@@ -73,50 +71,30 @@ export default async function handler(
         // perform checks
         const isUser = account === user;
         const likesAboveTwo = likes.meta.result_count > 2;
-        if (isUser && likesAboveTwo) {
-          const entry: NotionViralEntry = {
-            Username: {
-              title: [
-                {
-                  text: {
-                    content: user,
-                  },
-                },
-              ],
-            },
-            Wallet: {
-              rich_text: [
-                {
-                  text: {
-                    content: wallet,
-                  },
-                },
-              ],
-            },
-            Body: {
-              rich_text: [
-                {
-                  text: {
-                    content: tweetData.data.text,
-                  },
-                },
-              ],
-            },
-            Likes: { number: likes.meta.result_count },
-          };
-          const patchData = await patchNotion(
-            NOTION_VIRAL_DATABASE_ID,
-            "Viral",
-            entry,
-          );
-          if (patchData) {
-            returnEntries.push(patchData);
-          }
+        const mentionsPlatform =
+          tweetData.data.text.includes(X_PLATFORM_HANDLE);
+        // check that aggregation data does not already contain the wallet address
+        const walletExists = aggregationData.aggregations.some(
+          (row) => row.recipient === `did:pkh:eip155:1:${wallet.toLowerCase()}`,
+        );
+        // if all checks pass, then we can add the entry to the returnEntries array
+        if (isUser && likesAboveTwo && mentionsPlatform && !walletExists) {
+          recipientScores.push({
+            recipient: `did:pkh:eip155:1:${wallet.toLowerCase()}`,
+            score: 750,
+            context: "viral",
+          });
         }
       }
     }
+    // process and write the patches to Postgres
+    const pgResults = await writeScoresToPg(recipientScores);
+    console.log("Processed PG viral patches: ", pgResults);
 
-    res.status(200).json(returnEntries);
+    // process and write the patches to Ceramic
+    const results = await processSingleContextPoints(recipientScores);
+
+    res.status(200).json(results);
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal Server Error" });
