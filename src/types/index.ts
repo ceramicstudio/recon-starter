@@ -105,6 +105,7 @@ export interface RecipientScore {
   context: string;
   multiplier?: number;
   amount?: number;
+  subContext?: string;
 }
 
 export interface Answer {

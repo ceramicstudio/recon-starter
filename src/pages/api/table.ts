@@ -85,6 +85,7 @@
 //   points integer,
 //   date text,
 //   context text,
+//   subContext text,
 //   multiplier integer)
 // `;
 

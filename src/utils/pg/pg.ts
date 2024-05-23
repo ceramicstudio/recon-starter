@@ -33,22 +33,23 @@ export const createPgPoints = async (score: RecipientScore) => {
     });
     await client.connect();
 
-    //Query to determine if the recipient already has an entry in the total aggregation table 
+    //Query to determine if the recipient already has an entry in the total aggregation table
     const totalPointAggregation = `SELECT * FROM total_point_aggregation WHERE recipient='${transformedScore.recipient}' AND issuer='${issuerId}'`;
 
-    const totalAggregationDocs = await client.query(
-      totalPointAggregation,
-    );
+    const totalAggregationDocs = await client.query(totalPointAggregation);
 
     //Query to determine if the recipient already has an entry in the simple aggregation table based on the context
     const contextPointAggregation = `SELECT * FROM context_point_aggregation WHERE recipient='${transformedScore.recipient}' AND issuer='${issuerId}' AND context='${transformedScore.context}'`;
 
-    const contextAggregationDocs = await client.query(
-      contextPointAggregation,
-    );
-    
+    const contextAggregationDocs = await client.query(contextPointAggregation);
+
     // Insert new allocation entry
-    const newAllocationEntry = `INSERT INTO context_point_allocation (issuer, recipient, points, date, context, multiplier) VALUES ('${issuerId}', '${transformedScore.recipient}', ${transformedScore.amount}, '${new Date().toISOString()}', '${transformedScore.context}', ${transformedScore.multiplier}) RETURNING *`;
+    let newAllocationEntry;
+    if (transformedScore.subContext) {
+      newAllocationEntry = `INSERT INTO context_point_allocation (issuer, recipient, points, date, context, multiplier, subContext) VALUES ('${issuerId}', '${transformedScore.recipient}', ${transformedScore.amount}, '${new Date().toISOString()}', '${transformedScore.context}', ${transformedScore.multiplier}, '${transformedScore.subContext}') RETURNING *`;
+    } else {
+      newAllocationEntry = `INSERT INTO context_point_allocation (issuer, recipient, points, date, context, multiplier) VALUES ('${issuerId}', '${transformedScore.recipient}', ${transformedScore.amount}, '${new Date().toISOString()}', '${transformedScore.context}', ${transformedScore.multiplier}) RETURNING *`;
+    }
     const allocationResult = await client.query(newAllocationEntry);
 
     let contextAggregationResult;
@@ -57,7 +58,10 @@ export const createPgPoints = async (score: RecipientScore) => {
       // Insert new context point aggregation entry
       const newContextAggregationEntry = `INSERT INTO context_point_aggregation (issuer, recipient, points, date, context) VALUES ('${issuerId}', '${transformedScore.recipient}', ${transformedScore.amount}, '${new Date().toISOString()}', '${transformedScore.context}') RETURNING *`;
       contextAggregationResult = await client.query(newContextAggregationEntry);
-    } else if (contextAggregationDocs && contextAggregationDocs.rows.length > 0) {
+    } else if (
+      contextAggregationDocs &&
+      contextAggregationDocs.rows.length > 0
+    ) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment , @typescript-eslint/no-unsafe-member-access
       const updatedContextPoints = contextAggregationDocs.rows[0].points + transformedScore.amount;
 
@@ -79,9 +83,7 @@ export const createPgPoints = async (score: RecipientScore) => {
       const updatedPoints = totalAggregationDocs.rows[0].points + transformedScore.amount;
       // Update simple point aggregation entry
       const updateSimpleAggregationEntry = `UPDATE total_point_aggregation SET points = ${updatedPoints} WHERE recipient = '${transformedScore.recipient}' AND issuer = '${issuerId}' RETURNING *`;
-      totalAggregationResult = await client.query(
-        updateSimpleAggregationEntry,
-      );
+      totalAggregationResult = await client.query(updateSimpleAggregationEntry);
     }
 
     await client.end();
