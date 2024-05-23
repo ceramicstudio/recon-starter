@@ -1,17 +1,22 @@
 import { getTweet } from "@/utils/twitter/index";
 import { getDeform } from "@/utils/deform/getDeformData";
-import { type NextApiResponse } from "next";
+import { type NextApiResponse, type NextApiRequest } from "next";
 import { getPgContextCount } from "@/utils/pg/pgContextCount";
-import { type RecipientScore } from "@/types";
+import { type RecipientScore, type NewPoints } from "@/types";
 import { writeScoresToPg } from "@/utils/pg/processPgPoints";
 import { processSingleContextPoints } from "@/utils/ceramic/processSingleContextPoints";
 import { curly } from "node-libcurl";
+
+interface Response extends NextApiResponse {
+  status(code: number): Response;
+  send(data: Array<NewPoints> | undefined | { error: string }): void;
+}
 
 const DEFORM_VIRAL_FORM_ID = process.env.DEFORM_VIRAL_FORM_ID ?? "";
 const X_PLATFORM_HANDLE = process.env.X_PLATFORM_HANDLE ?? "";
 const CERAMIC_API = process.env.CERAMIC_API ?? "";
 
-export default async function handler(res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: Response) {
   try {
     // check if ceramic is up
     const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
@@ -93,8 +98,7 @@ export default async function handler(res: NextApiResponse) {
 
     // process and write the patches to Ceramic
     const results = await processSingleContextPoints(recipientScores);
-
-    res.status(200).json(results);
+    return res.status(200).json(results);
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal Server Error" });

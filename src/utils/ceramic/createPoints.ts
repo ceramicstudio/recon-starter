@@ -23,7 +23,7 @@ export const createAllocation = async ({
       context,
       date: new Date().toISOString(),
       multiplier: multiplier ?? 0,
-      subContext: subContext ?? "",
+      subContext: subContext ?? '',
     } as Partial<AllocationContent>);
     return allocation as ModelInstanceDocument<AllocationContent>;
   } catch (error) {
