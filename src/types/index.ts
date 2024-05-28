@@ -85,6 +85,7 @@ export interface AllocationContent {
   context: string;
   multiplier?: number;
   date: string;
+  subContext?: string;
 }
 
 export interface AllocationNode {
@@ -98,6 +99,7 @@ export interface AllocationNode {
     id: string;
   };
   multiplier?: number;
+  subContext?: string;
 }
 
 export interface RecipientScore {

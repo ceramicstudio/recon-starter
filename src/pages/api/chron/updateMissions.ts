@@ -1,6 +1,6 @@
 import { getNotion } from "@/utils/notion/index";
 import { patchMissions } from "@/utils/pg/patchMissions";
-import { type NextApiRequest, type NextApiResponse } from "next";
+import { type NextApiResponse } from "next";
 import { type ObjectType } from "@/types";
 
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID ?? "";
@@ -10,7 +10,7 @@ interface Response extends NextApiResponse {
   send(data: ObjectType[] | undefined | { error: string }): void;
 }
 
-export default async function handler(req: NextApiRequest, res: Response) {
+export default async function handler(res: Response) {
   try {
     const data = await getNotion(NOTION_DATABASE_ID, "Onboarding") as ObjectType[];
     if (!data) {
