@@ -9,8 +9,10 @@ import {
   type AllocationContent,
   type RecipientScore,
 } from "@/types";
+import { curly } from "node-libcurl";
 
-const approvedContexts = process.env.APPROVED_CONTEXTS?.split(",") ?? [];
+const CERAMIC_API = process.env.CERAMIC_API ?? "";
+const approvedContexts = ["orbis", "basin", "ceramic", "combined"];
 
 interface Request extends NextApiRequest {
   body: SinglePointsRequest & {
@@ -22,7 +24,7 @@ interface Request extends NextApiRequest {
 
 interface Response extends NextApiResponse {
   status(code: number): Response;
-  send(data: NewPoints | Error | { message: string }): void;
+  send(data: NewPoints | Error | { message: string } | { error: string }): void;
 }
 
 export default async function handler(req: Request, res: Response) {
@@ -38,9 +40,9 @@ export default async function handler(req: Request, res: Response) {
     } = req.body;
 
     // check if the context is approved
-    // if (!approvedContexts.includes(context)) {
-    //   return res.status(400).send({ error: "Invalid context" });
-    // }
+    if (!approvedContexts.includes(context)) {
+      return res.status(400).send({ error: "Invalid context" });
+    }
 
     // first grab allocations given the parameters from pg
     const allocations = await getPgAllocation(
@@ -85,23 +87,27 @@ export default async function handler(req: Request, res: Response) {
     recipientScores.push({
       recipient:
         recipient.length !== 42
-          ? recipient.slice(recipient.length - 42)
-          : recipient,
+          ? `did:pkh:eip155:1:${recipient.toLowerCase().slice(recipient.length - 42)}`
+          : `did:pkh:eip155:1:${recipient.toLowerCase()}`,
       score: amount,
       context,
       subContext,
       multiplier,
     });
 
-    return res.status(200).json(recipientScores);
-
     // process and write the patches to Postgres
     const pgResults = await writeScoresToPg(recipientScores);
     console.log("Processed PG external patches: ", pgResults);
 
-    // process and write the patches to Ceramic
-    const results = await processSingleContextPoints(recipientScores);
-    return res.status(200).json(results);
+    // check if ceramic is up
+    const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
+    if (data.statusCode !== 200 || data.data !== "Alive!") {
+      // process and write the patches to Ceramic
+      const results = await processSingleContextPoints(recipientScores);
+      return res.status(200).json(results);
+    } else if (pgResults) {
+      return res.status(200).send({ message: "Points Recorded" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal Server Error" });
