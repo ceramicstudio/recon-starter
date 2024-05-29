@@ -15,6 +15,7 @@ export const createAllocation = async ({
   context,
   multiplier,
   subContext,
+  trigger,
 }: SinglePointsRequest): Promise<
   ModelInstanceDocument<AllocationContent> | undefined
 > => {
@@ -23,7 +24,8 @@ export const createAllocation = async ({
       context,
       date: new Date().toISOString(),
       multiplier: multiplier ?? 0,
-      subContext: subContext ?? '',
+      subContext,
+      trigger,
     } as Partial<AllocationContent>);
     return allocation as ModelInstanceDocument<AllocationContent>;
   } catch (error) {
@@ -86,6 +88,7 @@ export const createPoints = async (score: RecipientScore) => {
       context: score.context,
       multiplier: score.multiplier,
       subContext: score.subContext,
+      trigger: score.trigger,
     });
 
     // then create aggregations

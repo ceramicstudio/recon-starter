@@ -18,6 +18,7 @@ export interface SinglePointsRequest {
   context: string;
   multiplier?: number;
   subContext?: string;
+  trigger?: string;
 }
 
 export interface NewPoints {
@@ -86,6 +87,7 @@ export interface AllocationContent {
   multiplier?: number;
   date: string;
   subContext?: string;
+  trigger?: string;
 }
 
 export interface AllocationNode {
@@ -100,6 +102,7 @@ export interface AllocationNode {
   };
   multiplier?: number;
   subContext?: string;
+  trigger?: string;
 }
 
 export interface RecipientScore {
@@ -109,6 +112,7 @@ export interface RecipientScore {
   multiplier?: number;
   amount?: number;
   subContext?: string;
+  trigger?: string;
 }
 
 export interface Answer {

@@ -1,7 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { getPgAllocation } from "@/utils/pg/pgAllocationQuery";
 import { writeScoresToPg } from "@/utils/pg/processPgPoints";
-import { processSingleContextPoints } from "@/utils/ceramic/processSingleContextPoints";
+import { createPoints } from "@/utils/ceramic/createPoints";
 import {
   type SinglePointsRequest,
   type NewPoints,
@@ -12,7 +12,9 @@ import {
 import { curly } from "node-libcurl";
 
 const CERAMIC_API = process.env.CERAMIC_API ?? "";
-const approvedContexts = ["orbis", "basin", "ceramic", "combined"];
+
+// approved context for this route set only to "playground"
+const approvedContexts = ["playground"];
 
 interface Request extends NextApiRequest {
   body: SinglePointsRequest & {
@@ -35,6 +37,7 @@ export default async function handler(req: Request, res: Response) {
       context,
       multiplier,
       subContext,
+      trigger,
       timing,
       oneTime,
     } = req.body;
@@ -49,6 +52,7 @@ export default async function handler(req: Request, res: Response) {
       recipient,
       context,
       subContext,
+      trigger,
     ).then((data) => {
       return data?.allocations as Array<AllocationContent>;
     });
@@ -84,7 +88,7 @@ export default async function handler(req: Request, res: Response) {
     }
 
     // otherwise, create a new allocation
-    recipientScores.push({
+    const recipientScore= {
       recipient:
         recipient.length !== 42
           ? `did:pkh:eip155:1:${recipient.toLowerCase().slice(recipient.length - 42)}`
@@ -92,8 +96,11 @@ export default async function handler(req: Request, res: Response) {
       score: amount,
       context,
       subContext,
+      trigger,
       multiplier,
-    });
+    };
+
+    recipientScores.push(recipientScore);
 
     // process and write the patches to Postgres
     const pgResults = await writeScoresToPg(recipientScores);
@@ -101,10 +108,10 @@ export default async function handler(req: Request, res: Response) {
 
     // check if ceramic is up
     const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
-    if (data.statusCode !== 200 || data.data !== "Alive!") {
+    if (data.data === "Alive!") {
       // process and write the patches to Ceramic
-      const results = await processSingleContextPoints(recipientScores);
-      return res.status(200).json(results);
+      const result = await createPoints(recipientScore);
+      return res.status(200).json(result);
     } else if (pgResults) {
       return res.status(200).send({ message: "Points Recorded" });
     }

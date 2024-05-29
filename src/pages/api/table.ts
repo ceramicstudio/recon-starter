@@ -86,6 +86,7 @@
 //   date text,
 //   context text,
 //   subContext text,
+//   trigger text,
 //   multiplier integer)
 // `;
 

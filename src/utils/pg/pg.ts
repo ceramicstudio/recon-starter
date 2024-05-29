@@ -45,8 +45,12 @@ export const createPgPoints = async (score: RecipientScore) => {
 
     // Insert new allocation entry
     let newAllocationEntry;
-    if (transformedScore.subContext) {
+    if (transformedScore.subContext && transformedScore.trigger) {
+      newAllocationEntry = `INSERT INTO context_point_allocation (issuer, recipient, points, date, context, multiplier, subContext, trigger) VALUES ('${issuerId}', '${transformedScore.recipient}', ${transformedScore.amount}, '${new Date().toISOString()}', '${transformedScore.context}', ${transformedScore.multiplier}, '${transformedScore.subContext}', '${transformedScore.trigger}') RETURNING *`;
+    } else if (transformedScore.subContext) {
       newAllocationEntry = `INSERT INTO context_point_allocation (issuer, recipient, points, date, context, multiplier, subContext) VALUES ('${issuerId}', '${transformedScore.recipient}', ${transformedScore.amount}, '${new Date().toISOString()}', '${transformedScore.context}', ${transformedScore.multiplier}, '${transformedScore.subContext}') RETURNING *`;
+    } else if (transformedScore.trigger) {
+      newAllocationEntry = `INSERT INTO context_point_allocation (issuer, recipient, points, date, context, multiplier, trigger) VALUES ('${issuerId}', '${transformedScore.recipient}', ${transformedScore.amount}, '${new Date().toISOString()}', '${transformedScore.context}', ${transformedScore.multiplier}, '${transformedScore.trigger}') RETURNING *`;
     } else {
       newAllocationEntry = `INSERT INTO context_point_allocation (issuer, recipient, points, date, context, multiplier) VALUES ('${issuerId}', '${transformedScore.recipient}', ${transformedScore.amount}, '${new Date().toISOString()}', '${transformedScore.context}', ${transformedScore.multiplier}) RETURNING *`;
     }

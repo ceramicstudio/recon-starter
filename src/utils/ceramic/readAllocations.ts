@@ -34,6 +34,7 @@ export const getAllocations = async (recipient: string, context: string) => {
                         points
                         multiplier
                         subContext
+                        trigger
                      }
                   }
                 }

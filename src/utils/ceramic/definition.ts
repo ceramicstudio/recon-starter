@@ -7,7 +7,7 @@ export const definition = {
         "kjzl6hvfrbw6cakj74rf7d3qjnm3xoydcgx7orzw4bwdmc6kljd04uojuhpef2j",
         "kjzl6hvfrbw6c6lxvcf8bc07wjyn29ocoxqn877uia1y86qph79axtdrcuijpeo",
       ],
-      id: "kjzl6hvfrbw6c88kn2wbny8f2m574v5nclvdzbsag0clctxx0pgz4kf10p6neyn",
+      id: "kjzl6hvfrbw6c5poicj2v3iznbu2d3nhzu67uiz51ln7ie5pbwatilj4cn1uh5u",
       accountRelation: { type: "list" },
     },
     PointsAllocationInterface: {
@@ -75,6 +75,12 @@ export const definition = {
       context: {
         type: "string",
         required: true,
+        immutable: false,
+        indexed: true,
+      },
+      trigger: {
+        type: "string",
+        required: false,
         immutable: false,
         indexed: true,
       },
