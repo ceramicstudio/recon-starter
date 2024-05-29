@@ -1,6 +1,6 @@
 import { getNotion } from "@/utils/notion/index";
 import { patchNotion } from "@/utils/notion/patch";
-import { getPgContextCount } from "@/utils/pg/pgContextCount";
+import { getPgAllocationCount } from "@/utils/pg/pgAllocationCount";
 import { getDeform } from "@/utils/deform/getDeformData";
 import { type NextApiRequest, type NextApiResponse } from "next";
 import {
@@ -38,11 +38,11 @@ export default async function handler(
       return data?.data;
     });
 
-    // fetch the aggregation data
-    const aggregationData = await getPgContextCount("feedback");
+    // fetch the allocation data
+    const allocationData = await getPgAllocationCount("feedback");
 
     // failure mode for fetching Notion or DeForm data
-    if (!notionData || !deformData || !aggregationData) {
+    if (!notionData || !deformData || !allocationData) {
       return res.status(500).send({ error: "Internal Server Error" });
     }
 
@@ -167,16 +167,25 @@ export default async function handler(
       const wallet = entry.Wallet.rich_text[0]
         ? entry.Wallet.rich_text[0].text.content
         : "";
-      // check that aggregation data does not already contain the wallet address
-      const walletExists = aggregationData.aggregations.some(
-        (row) => row.recipient === `did:pkh:eip155:1:${wallet.toLowerCase()}`,
+        const context = "feedback";
+      const subContext = entry.Feedback.rich_text[0] ? entry.Feedback.rich_text[0].text.content : "";
+      
+
+      // ensure allocationData does not already have an entry where the wallet, context, and subContext match
+      const isDuplicate = allocationData.allocations.some(
+        (allocation) =>
+          allocation.recipient === `did:pkh:eip155:1:${wallet.toLowerCase()}` &&
+          allocation.context === context &&
+          allocation.subContext === subContext,
       );
+
       // if all checks pass, then we can add the entry to the returnEntries array
-      if (isHelpful && !walletExists) {
+      if (isHelpful && !isDuplicate) {
         recipientScores.push({
           recipient: `did:pkh:eip155:1:${wallet.toLowerCase()}`,
           score: 750,
-          context: "feedback",
+          context,
+          subContext,
         });
       }
     }

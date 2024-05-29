@@ -1,10 +1,10 @@
 import { getTweet } from "@/utils/twitter/index";
 import { getDeform } from "@/utils/deform/getDeformData";
 import { type NextApiResponse, type NextApiRequest } from "next";
-import { getPgContextCount } from "@/utils/pg/pgContextCount";
+import { getPgAllocationCount } from "@/utils/pg/pgAllocationCount";
 import { type RecipientScore, type NewPoints } from "@/types";
 import { writeScoresToPg } from "@/utils/pg/processPgPoints";
-import { processSingleContextPoints } from "@/utils/ceramic/processSingleContextPoints";
+import { processMultiPoints } from "@/utils/ceramic/processMultiPoints";
 import { curly } from "node-libcurl";
 
 interface Response extends NextApiResponse {
@@ -28,14 +28,14 @@ export default async function handler(req: NextApiRequest, res: Response) {
       return data?.data;
     });
 
-    const aggregationData = await getPgContextCount("viral");
-    // failure mode for fetching DeForm data or aggregation data
-    if (!deformData || !aggregationData) {
+    const allocationData = await getPgAllocationCount("viral");
+    // failure mode for fetching DeForm data or allocation data
+    if (!deformData || !allocationData) {
       return res.status(500).send({ error: "Internal Server Error" });
     }
 
     // first, see if there is a difference between the number of rows in the PG database and the number of rows in the DeForm database
-    const difference = deformData.length - aggregationData.aggregationCount;
+    const difference = deformData.length - allocationData.allocationCount;
     const recipientScores = [] as Array<RecipientScore>;
     // if there is a difference, then we need to update the Notion database
     if (difference > 0) {
@@ -78,15 +78,20 @@ export default async function handler(req: NextApiRequest, res: Response) {
         const likesAboveTwo = likes.meta.result_count > 2;
         const mentionsPlatform =
           tweetData.data.text.includes(X_PLATFORM_HANDLE);
-        // check that aggregation data does not already contain the wallet address
-        const walletExists = aggregationData.aggregations.some(
-          (row) => row.recipient === `did:pkh:eip155:1:${wallet.toLowerCase()}`,
-        );
+
         // if all checks pass, then we can add the entry to the returnEntries array
-        if (isUser && likesAboveTwo && mentionsPlatform && !walletExists) {
+        if (isUser && likesAboveTwo && mentionsPlatform) {
           recipientScores.push({
             recipient: `did:pkh:eip155:1:${wallet.toLowerCase()}`,
             score: 750,
+            context: "viral",
+          });
+        }
+        // if the checks fail, still add the entry to the returnEntries array, but with a score of 0 to ensure the entry is recorded
+        else {
+          recipientScores.push({
+            recipient: `did:pkh:eip155:1:${wallet.toLowerCase()}`,
+            score: 0,
             context: "viral",
           });
         }
@@ -97,7 +102,7 @@ export default async function handler(req: NextApiRequest, res: Response) {
     console.log("Processed PG viral patches: ", pgResults);
 
     // process and write the patches to Ceramic
-    const results = await processSingleContextPoints(recipientScores);
+    const results = await processMultiPoints(recipientScores);
     return res.status(200).json(results);
   } catch (error) {
     console.error(error);

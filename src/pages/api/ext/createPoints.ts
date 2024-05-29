@@ -1,7 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { getPgAllocation } from "@/utils/pg/pgAllocationQuery";
 import { writeScoresToPg } from "@/utils/pg/processPgPoints";
-import { createPoints } from "@/utils/ceramic/createPoints";
+import { processMultiPoints } from "@/utils/ceramic/processMultiPoints";
 import {
   type SinglePointsRequest,
   type NewPoints,
@@ -88,7 +88,7 @@ export default async function handler(req: Request, res: Response) {
     }
 
     // otherwise, create a new allocation
-    const recipientScore= {
+    recipientScores.push({
       recipient:
         recipient.length !== 42
           ? `did:pkh:eip155:1:${recipient.toLowerCase().slice(recipient.length - 42)}`
@@ -98,9 +98,7 @@ export default async function handler(req: Request, res: Response) {
       subContext,
       trigger,
       multiplier,
-    };
-
-    recipientScores.push(recipientScore);
+    });
 
     // process and write the patches to Postgres
     const pgResults = await writeScoresToPg(recipientScores);
@@ -110,8 +108,8 @@ export default async function handler(req: Request, res: Response) {
     const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
     if (data.data === "Alive!") {
       // process and write the patches to Ceramic
-      const result = await createPoints(recipientScore);
-      return res.status(200).json(result);
+      const results = await processMultiPoints(recipientScores);
+      return res.status(200).json(results);
     } else if (pgResults) {
       return res.status(200).send({ message: "Points Recorded" });
     }
