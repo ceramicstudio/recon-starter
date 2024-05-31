@@ -7,7 +7,7 @@ interface Response extends NextApiResponse {
   send(data: { rows: string[][] | undefined | null } | Error): void;
 }
 
-export default async function handler(req: NextApiRequest, res: Response) {
+export default async function handler(_req: NextApiRequest, res: Response) {
   try {
     const rows = (await getSheetData()) as string[][] | undefined | null;
     res.status(200).send({ rows });

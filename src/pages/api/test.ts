@@ -12,7 +12,7 @@ interface Response extends NextApiResponse {
   ): void;
 }
 
-export default async function handler(req: NextApiRequest, res: Response) {
+export default async function handler(_req: NextApiRequest, res: Response) {
   try {
     // const data = await getNotion();
     // const newData = await patchMissions(data!);

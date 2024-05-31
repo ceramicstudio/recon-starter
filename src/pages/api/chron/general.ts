@@ -25,7 +25,7 @@ interface Response extends NextApiResponse {
   send(data: Array<NewPoints> | Message | Error): void;
 }
 
-export default async function handler(req: NextApiRequest, res: Response) {
+export default async function handler(_req: NextApiRequest, res: Response) {
   try {
     // check if ceramic is up
     const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");

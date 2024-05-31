@@ -18,7 +18,7 @@ const DEFORM_FEEDBACK_FORM_ID = process.env.DEFORM_FEEDBACK_FORM_ID ?? "";
 const CERAMIC_API = process.env.CERAMIC_API ?? "";
 
 export default async function handler(
-  req: NextApiRequest,
+  _req: NextApiRequest,
   res: NextApiResponse,
 ) {
   try {

@@ -13,7 +13,7 @@ interface Response extends NextApiResponse {
   ): void;
 }
 
-export default async function handler(req: NextApiRequest, res: Response) {
+export default async function handler(_req: NextApiRequest, res: Response) {
   try {
     const aggregations = await getAggregationCount();
     res.status(200).send({ aggregations: aggregations ?? undefined });

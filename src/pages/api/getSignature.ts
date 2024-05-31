@@ -7,7 +7,7 @@ interface Response extends NextApiResponse {
   send(data: { message: string; nonce: string } | Error): void;
 }
 
-export default async function handler(req: NextApiRequest, res: Response) {
+export default async function handler(_req: NextApiRequest, res: Response) {
   try {
     const messageAndNonce = await fetchMessageAndNonce();
     if (messageAndNonce) {

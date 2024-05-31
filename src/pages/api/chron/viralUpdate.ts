@@ -16,7 +16,7 @@ const DEFORM_VIRAL_FORM_ID = process.env.DEFORM_VIRAL_FORM_ID ?? "";
 const X_PLATFORM_HANDLE = process.env.X_PLATFORM_HANDLE ?? "";
 const CERAMIC_API = process.env.CERAMIC_API ?? "";
 
-export default async function handler(req: NextApiRequest, res: Response) {
+export default async function handler(_req: NextApiRequest, res: Response) {
   try {
     // check if ceramic is up
     const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
