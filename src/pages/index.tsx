@@ -81,7 +81,7 @@ export default function Home() {
 
       {/* Pricing */}
 
-      <section className="border-border bg-background dark border-b">
+      {/* <section className="border-border bg-background dark border-b">
         <div className="container mx-auto text-center">
           <div className="py-14">
             <h2 className="text-foreground my-4 text-4xl font-extrabold">
@@ -131,7 +131,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
