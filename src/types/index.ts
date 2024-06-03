@@ -12,6 +12,11 @@ export interface Error {
   error: string;
 }
 
+export interface FooterLink {
+  href: string;
+  label: string;
+};
+
 export interface SinglePointsRequest {
   recipient: string;
   amount: number;

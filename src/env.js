@@ -62,6 +62,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_PROJECT_ID: z.string(),
+    NEXT_PUBLIC_GA_TRACKING_ID: z.string(),
   },
 
   /**
@@ -104,6 +105,7 @@ export const env = createEnv({
     DEFORM_VIRAL_FORM_ID: process.env.DEFORM_VIRAL_FORM_ID,
     DEFORM_FEEDBACK_FORM_ID: process.env.DEFORM_FEEDBACK_FORM_ID,
     X_PLATFORM_HANDLE: process.env.X_PLATFORM_HANDLE,
+    NEXT_PUBLIC_GA_TRACKING_ID: process.env.NEXT_PUBLIC_GA_TRACKING_ID,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
