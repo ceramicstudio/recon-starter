@@ -8,7 +8,9 @@ import {
   type RecipientScore,
 } from "@/types";
 import { getAggregation } from "@/utils/ceramic/readAggregations";
-import { totalsQueue } from "@/workers/aggregations.worker";
+import { totalsQueue } from "@/workers/totalAggregations.worker";
+import {contextQueue} from "@/workers/contextAggregations.worker";
+import {allocationQueue} from "@/workers/allocations.worker";
 
 export const createAllocation = async ({
   recipient,
@@ -97,6 +99,14 @@ export const createPoints = async (score: RecipientScore) => {
       subContext: score.subContext,
       trigger: score.trigger,
     });
+    // const allocation = await allocationQueue.add("allocationsQueue", {
+    //   recipient: score.recipient,
+    //   amount: score.amount,
+    //   context: score.context,
+    //   multiplier: score.multiplier,
+    //   subContext: score.subContext,
+    //   trigger: score.trigger,
+    // });
 
     // then update Total Aggregation
     const updatedTotalAgg = await updateTotalAggregation(
@@ -114,6 +124,11 @@ export const createPoints = async (score: RecipientScore) => {
       score.context,
       score.amount,
     );
+    // const updatedContextAgg = await contextQueue.add("contextQueue", {
+    //   recipient: score.recipient,
+    //   context: score.context,  
+    //   amount: score.amount,  
+
     // do checking here
     if (!updatedContextAgg || !updatedTotalAgg) {
       return undefined;

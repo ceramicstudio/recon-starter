@@ -1,6 +1,6 @@
 import { patchMissions } from "@/utils/pg/patchMissions";
 import { getNotion } from "@/utils/notion/index";
-import {totalsQueue} from "@/workers/aggregations.worker";
+import {totalsQueue} from "@/workers/totalAggregations.worker";
 import { getTweet } from "@/utils/twitter/index";
 import { type NextApiRequest, type NextApiResponse } from "next";
 
