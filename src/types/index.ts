@@ -60,6 +60,11 @@ export interface AggregationContent {
   date: string;
 }
 
+export interface TotalAggregationWorkerInput {
+  recipient: string;
+  amount: number;
+}
+
 export interface ContextAggregationContent extends AggregationContent {
   context: string;
 }

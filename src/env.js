@@ -42,6 +42,7 @@ export const env = createEnv({
     X_BEARER_TOKEN: z.string(),
     NOTION_FEEDBACK_DATABASE_ID: z.string(),
     X_PLATFORM_HANDLE: z.string(),
+    REDIS_URL: z.string(),
     //optional
     DISCORD_CLIENT_ID: z.string().optional(),
     DISCORD_CLIENT_SECRET: z.string().optional(),
@@ -106,6 +107,7 @@ export const env = createEnv({
     DEFORM_FEEDBACK_FORM_ID: process.env.DEFORM_FEEDBACK_FORM_ID,
     X_PLATFORM_HANDLE: process.env.X_PLATFORM_HANDLE,
     NEXT_PUBLIC_GA_TRACKING_ID: process.env.NEXT_PUBLIC_GA_TRACKING_ID,
+    REDIS_URL: process.env.REDIS_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

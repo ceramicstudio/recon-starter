@@ -8,6 +8,7 @@ import {
   type RecipientScore,
 } from "@/types";
 import { getAggregation } from "@/utils/ceramic/readAggregations";
+import { totalsQueue } from "@/workers/aggregations.worker";
 
 export const createAllocation = async ({
   recipient,
@@ -34,17 +35,11 @@ export const createAllocation = async ({
   }
 };
 
-export const createAggregations = async (
+export const createContextAggregation = async (
   recipient: string,
   context: string,
   amount: number,
-): Promise<
-  | {
-      updatedContextAgg: ModelInstanceDocument<AggregationContent>;
-      updatedTotalAgg: ModelInstanceDocument<AggregationContent>;
-    }
-  | undefined
-> => {
+): Promise<ModelInstanceDocument<AggregationContent> | undefined> => {
   try {
     // get context aggregation doc if exists
     const aggregationDoc = await getAggregation(recipient, context);
@@ -62,6 +57,18 @@ export const createAggregations = async (
         } as Partial<PointsContent>,
       );
 
+    return updatedContextAgg;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+};
+
+export const updateTotalAggregation = async (
+  recipient: string,
+  amount: number,
+): Promise<ModelInstanceDocument<AggregationContent> | undefined> => {
+  try {
     // update total aggregation
     const updatedTotalAgg: ModelInstanceDocument<AggregationContent> =
       await writer.updatePointsAggregationFor([recipient], (content) => {
@@ -71,7 +78,7 @@ export const createAggregations = async (
           recipient,
         };
       });
-    return { updatedContextAgg, updatedTotalAgg };
+    return updatedTotalAgg;
   } catch (error) {
     console.error(error);
     return undefined;
@@ -91,15 +98,26 @@ export const createPoints = async (score: RecipientScore) => {
       trigger: score.trigger,
     });
 
+    // then update Total Aggregation
+    const updatedTotalAgg = await updateTotalAggregation(
+      score.recipient,
+      score.amount,
+    );
+    // const updatedTotalAgg = await totalsQueue.add("totalsQueue", {
+    //   recipient: score.recipient,
+    //   amount: score.amount,
+    // });
+
     // then create aggregations
-    const { updatedContextAgg, updatedTotalAgg } = (await createAggregations(
+    const updatedContextAgg = await createContextAggregation(
       score.recipient,
       score.context,
       score.amount,
-    )) as {
-      updatedContextAgg: ModelInstanceDocument<AggregationContent>;
-      updatedTotalAgg: ModelInstanceDocument<AggregationContent>;
-    };
+    );
+    // do checking here
+    if (!updatedContextAgg || !updatedTotalAgg) {
+      return undefined;
+    }
     return {
       contextTotal: updatedContextAgg.content
         ? updatedContextAgg.content.points
