@@ -1,6 +1,6 @@
 import { getPgTotalCount } from "@/utils/pg/pgAggregationCount";
 import { readAggTotals } from "@/utils/ceramic/readAggTotals";
-import { createPatchedTotalAgg } from "@/utils/ceramic/createPoints";
+import { totalsQueue } from "@/workers/totalAggregations.worker";
 import { type PgTotalAggregation, type AggTotalContent } from "../../types";
 
 export const patchAggTotals = async () => {
@@ -30,7 +30,7 @@ export const patchAggTotals = async () => {
 
     // iterate through aggregations and check that there's a corresponding total in the totals array (based on recipient) with the same points value
     // if there is no corresponding object for that recipient in the totals array, or if the points value is different, add the total to a new array
-    const totalsToPatch = [];
+    // const totalsToPatch = [];
     for (const agg of aggregations) {
       const total = totals.find(
         (total) => total.node.recipient.id === agg.recipient,
@@ -38,19 +38,23 @@ export const patchAggTotals = async () => {
       if (!total || total.node.points !== agg.points) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         // create a new total with the recipient, date, points, and verified status on Ceramic
-        const patchedTotal = await createPatchedTotalAgg(
-          agg.recipient,
-          agg.date,
-          agg.points,
-          agg.verified,
-        );
-        if (patchedTotal) {
-          totalsToPatch.push(patchedTotal);
-        }
+        // const patchedTotal = await createPatchedTotalAgg(
+        //   agg.recipient,
+        //   agg.date,
+        //   agg.points,
+        //   agg.verified,
+        // );
+        await totalsQueue.add("totalsQueue", {
+          recipient: agg.recipient,
+          date: agg.date,
+          points: agg.points,
+          verified: agg.verified,
+        });
       }
     }
 
-    return totalsToPatch;
+    // return totalsToPatch;
+    return {message: "Successfully patched totals"};
   } catch (error) {
     console.error(error);
     return undefined;

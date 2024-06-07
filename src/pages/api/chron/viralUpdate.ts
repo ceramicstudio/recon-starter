@@ -5,7 +5,6 @@ import { getPgAllocationCount } from "@/utils/pg/pgAllocationCount";
 import { type RecipientScore, type NewPoints } from "@/types";
 import { writeScoresToPg } from "@/utils/pg/processPgPoints";
 import { processMultiPoints } from "@/utils/ceramic/processMultiPoints";
-import { curly } from "node-libcurl";
 
 interface Response extends NextApiResponse {
   status(code: number): Response;
@@ -14,16 +13,10 @@ interface Response extends NextApiResponse {
 
 const DEFORM_VIRAL_FORM_ID = process.env.DEFORM_VIRAL_FORM_ID ?? "";
 const X_PLATFORM_HANDLE = process.env.X_PLATFORM_HANDLE ?? "";
-const CERAMIC_API = process.env.CERAMIC_API ?? "";
 
 export default async function handler(_req: NextApiRequest, res: Response) {
   try {
-    // check if ceramic is up
-    const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
-    if (data.statusCode !== 200 || data.data !== "Alive!") {
-      return res.status(500).send({ error: "Ceramic is down" });
-    }
-
+    // fetch the DeForm data
     const deformData = await getDeform(DEFORM_VIRAL_FORM_ID).then((data) => {
       return data?.data;
     });

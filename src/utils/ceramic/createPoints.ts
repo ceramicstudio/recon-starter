@@ -91,15 +91,7 @@ export const createPoints = async (score: RecipientScore) => {
   try {
     score.amount = score.score;
     // first create allocation
-    const allocation = await createAllocation({
-      recipient: score.recipient,
-      amount: score.amount,
-      context: score.context,
-      multiplier: score.multiplier,
-      subContext: score.subContext,
-      trigger: score.trigger,
-    });
-    // const allocation = await allocationQueue.add("allocationsQueue", {
+    // const allocation = await createAllocation({
     //   recipient: score.recipient,
     //   amount: score.amount,
     //   context: score.context,
@@ -107,38 +99,40 @@ export const createPoints = async (score: RecipientScore) => {
     //   subContext: score.subContext,
     //   trigger: score.trigger,
     // });
+    await allocationQueue.add("allocationsQueue", {
+      recipient: score.recipient,
+      amount: score.amount,
+      context: score.context,
+      multiplier: score.multiplier,
+      subContext: score.subContext,
+      trigger: score.trigger,
+    });
 
     // then update Total Aggregation
-    const updatedTotalAgg = await updateTotalAggregation(
-      score.recipient,
-      score.amount,
-    );
-    // const updatedTotalAgg = await totalsQueue.add("totalsQueue", {
-    //   recipient: score.recipient,
-    //   amount: score.amount,
-    // });
+    // const updatedTotalAgg = await updateTotalAggregation(
+    //   score.recipient,
+    //   score.amount,
+    // );
+     await totalsQueue.add("totalsQueue", {
+      recipient: score.recipient,
+      amount: score.amount,
+    });
 
     // then create aggregations
-    const updatedContextAgg = await createContextAggregation(
-      score.recipient,
-      score.context,
-      score.amount,
-    );
-    // const updatedContextAgg = await contextQueue.add("contextQueue", {
-    //   recipient: score.recipient,
-    //   context: score.context,  
-    //   amount: score.amount,  
+    // const updatedContextAgg = await createContextAggregation(
+    //   score.recipient,
+    //   score.context,
+    //   score.amount,
+    // );
+     await contextQueue.add("contextQueue", {
+      recipient: score.recipient,
+      context: score.context,  
+      amount: score.amount,  
+    });
 
-    // do checking here
-    if (!updatedContextAgg || !updatedTotalAgg) {
-      return undefined;
-    }
+
     return {
-      contextTotal: updatedContextAgg.content
-        ? updatedContextAgg.content.points
-        : 0,
-      total: updatedTotalAgg.content ? updatedTotalAgg.content.points : 0,
-      allocationDoc: allocation?.content ?? undefined,
+      message: "Successfully added requests to queues"
     };
   } catch (error) {
     console.error(error);

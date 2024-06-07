@@ -6,17 +6,19 @@ export const processSingleContextPoints = async (
   scores: Array<RecipientScore>,
 ) => {
   try {
-    const results = [];
+    // const results = [];
     for (const score of scores) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
       const response = await getAllocations(score.recipient, score.context);
       if (response === undefined || response.length === 0) {
-        console.log("Processing score for: ", score.recipient);
-        const newPoints = await createPoints(score);
-        results.push(newPoints);
+        // console.log("Processing score for: ", score.recipient);
+        // const newPoints = await createPoints(score);
+        await createPoints(score);
+        // results.push(newPoints);
       }
     }
-    return results as Array<NewPoints> | undefined;
+    // return results as Array<NewPoints> | undefined;
+    return {message: "Successfully processed scores"};
   } catch (error) {
     console.error(error);
     return undefined;

@@ -11,10 +11,8 @@ import {
 } from "@/utils/pg/processPgPoints";
 import { getPgTotalCount } from "@/utils/pg/pgAggregationCount";
 import { saveCustomers } from "@/utils/pg/saveCustomer";
-import { curly } from "node-libcurl";
 // import { getAggregationCount } from "@/utils/readAggregationCount";
 
-const CERAMIC_API = process.env.CERAMIC_API ?? "";
 const DEFORM_FORM_ID = process.env.DEFORM_FORM_ID ?? "";
 /*
 NOTE: current implementation uses Postgres as the source of truth, and prioritizes writing to Postgres first.
@@ -27,12 +25,6 @@ interface Response extends NextApiResponse {
 
 export default async function handler(_req: NextApiRequest, res: Response) {
   try {
-    // check if ceramic is up
-    const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
-    if (data.statusCode !== 200 || data.data !== "Alive!") {
-      return res.status(500).send({ error: "Ceramic is down" });
-    }
-
     // fetch the DeForm data
     const rows = await getDeform(DEFORM_FORM_ID).then((data) => {
       return data?.data;
@@ -134,11 +126,14 @@ export default async function handler(_req: NextApiRequest, res: Response) {
         ...referralScores,
       ]);
 
-      if (results && patchedReferralResults) {
-        res.status(200).send([...results, ...patchedReferralResults]);
-      } else {
-        res.status(500).send({ error: "Internal Server Error" });
-      }
+      // if (results && patchedReferralResults) {
+      //   res.status(200).send([...results, ...patchedReferralResults]);
+      // } else {
+      //   res.status(500).send({ error: "Internal Server Error" });
+      // }
+      res.status(200).send({
+        message: "Entries processed successfully",
+      });
     } else {
       res.status(200).send({ message: "No new entries to process" });
     }

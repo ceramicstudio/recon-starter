@@ -21,7 +21,7 @@ export const processReferralPoints = async (scores: Array<RecipientScore>) => {
         const numOfIterations = difference / 100;
 
         for (let i = 0; i < numOfIterations; i++) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // await new Promise((resolve) => setTimeout(resolve, 1000));
           // create points with the recipient's aggregation doc's points value + 100
           const newScore = {
             recipient: score.recipient,
@@ -30,12 +30,13 @@ export const processReferralPoints = async (scores: Array<RecipientScore>) => {
             amount: 100,
             multiplier: score.multiplier,
           };
-          const newPoints = await createPoints(newScore);
-          results.push(newPoints);
+          await createPoints(newScore);
+          // results.push(newPoints);
         }
       }
     }
-    return results as Array<NewPoints> | undefined;
+    // return results as Array<NewPoints> | undefined;
+    return { message: "Successfully processed referral points" };
   } catch (error) {
     console.error(error);
     return undefined;

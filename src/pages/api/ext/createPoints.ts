@@ -9,9 +9,6 @@ import {
   type AllocationContent,
   type RecipientScore,
 } from "@/types";
-import { curly } from "node-libcurl";
-
-const CERAMIC_API = process.env.CERAMIC_API ?? "";
 
 // approved context for this route set only to "playground"
 const approvedContexts = ["playground"];
@@ -104,15 +101,8 @@ export default async function handler(req: Request, res: Response) {
     const pgResults = await writeScoresToPg(recipientScores);
     console.log("Processed PG external patches: ", pgResults);
 
-    // check if ceramic is up
-    const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
-    if (data.data === "Alive!") {
-      // process and write the patches to Ceramic
-      const results = await processMultiPoints(recipientScores);
-      return res.status(200).json(results);
-    } else if (pgResults) {
-      return res.status(200).send({ message: "Points Recorded" });
-    }
+    await processMultiPoints(recipientScores);
+    return res.status(200).send({ message: "Points Recorded" });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal Server Error" });

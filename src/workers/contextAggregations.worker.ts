@@ -1,12 +1,12 @@
 import { Worker, Queue } from "bullmq";
 import { type SinglePointsRequest } from "@/types";
 import { createContextAggregation } from "@/utils/ceramic/createPoints";
-import { curly } from "node-libcurl";
+import { checkCeramic } from "@/workers/ceramicCheck"
 import IORedis from "ioredis";
 import dotenv from "dotenv";
 
 dotenv.config();
-const { REDIS_URL, CERAMIC_API } = process.env;
+const { REDIS_URL } = process.env;
 
 export const contextQueue = new Queue("contextQueue", {
   connection: new IORedis(REDIS_URL!, {
@@ -35,6 +35,7 @@ export const contextWorker = new Worker(
       if (response === undefined) {
         throw new Error("Unable to update context aggregation");
       } else {
+        console.log(`Context aggregation created or updated for ${data.recipient} in context ${data.context}`);
         return response;
       }
     } catch (error) {
@@ -54,21 +55,3 @@ export const contextWorker = new Worker(
   },
 );
 
-// function that checks if the Ceramic node is up - if not, wait 10 seconds and try again
-export const checkCeramic = async (iterations = 0) => {
-  try {
-    if (iterations > 3) {
-      console.log("Ceramic is down after 3 attempts");
-      return;
-    }
-    const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
-    if (data.statusCode !== 200 || data.data !== "Alive!") {
-      console.log("Ceramic is down");
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      return void checkCeramic(iterations + 1);
-    }
-  } catch (error) {
-    console.error(error);
-    return;
-  }
-};

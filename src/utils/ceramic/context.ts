@@ -4,18 +4,26 @@ import { fromString } from "uint8arrays";
 import { ComposeClient } from "@composedb/client";
 import { definition } from "@/utils/ceramic/definition";
 import type { RuntimeCompositeDefinition } from "@composedb/types";
+import dotenv from "dotenv";
 
-const ceramic = process.env.CERAMIC_API ?? "";
-const CERAMIC_PRIVATE_KEY: string = process.env.CERAMIC_PRIVATE_KEY ?? "";
-const aggregationModelID: string | undefined =
-  process.env.AGGREGATION_ID ?? undefined;
-const allocationModelID: string | undefined =
-  process.env.ALLOCATION_ID ?? undefined;
+dotenv.config();
+const {
+  CERAMIC_PRIVATE_KEY,
+  CERAMIC_API,
+  AGGREGATION_ID,
+  ALLOCATION_ID,
+  VERIFIED_TOTAL_ID,
+} = process.env;
+
+const ceramic = CERAMIC_API ?? "";
+const private_key: string = CERAMIC_PRIVATE_KEY ?? "";
+const aggregationModelID: string | undefined = AGGREGATION_ID ?? undefined;
+const allocationModelID: string | undefined = ALLOCATION_ID ?? undefined;
 const totalAggregationModelID: string | undefined =
-  process.env.VERIFIED_TOTAL_ID ?? undefined;
+  VERIFIED_TOTAL_ID ?? undefined;
 
 //eslint-disable-next-line
-const seed = fromString(CERAMIC_PRIVATE_KEY, "base16") as Uint8Array;
+const seed = fromString(private_key, "base16") as Uint8Array;
 
 // create a context writer
 const contextWriter = await PointsWriter.fromSeed({

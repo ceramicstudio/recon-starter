@@ -6,7 +6,9 @@ import {
   type SinglePointsRequest,
   type Error
 } from "@/types";
-import { createAggregations, createAllocation } from "@/utils/ceramic/createPoints";
+import { totalsQueue } from "@/workers/totalAggregations.worker";
+import {contextQueue} from "@/workers/contextAggregations.worker";
+import {allocationQueue} from "@/workers/allocations.worker";
 
 interface Request extends NextApiRequest {
   body: SinglePointsRequest;
@@ -14,38 +16,44 @@ interface Request extends NextApiRequest {
 
 interface Response extends NextApiResponse {
   status(code: number): Response;
-  send(data: NewPoints | Error): void;
+  send(data: {message: string} | Error): void;
 }
 
 export default async function handler(req: Request, res: Response) {
   try {
-    const { recipient, amount, context, multiplier } = req.body;
+    const { recipient, amount, context, multiplier, subContext, trigger } = req.body;
 
     // first create allocation
-    const allocation = await createAllocation({
+    await allocationQueue.add("allocationsQueue", {
       recipient,
       amount,
       context,
       multiplier,
+      subContext,
+      trigger,
     });
 
     // then create aggregations
-    const { updatedContextAgg, updatedTotalAgg } = (await createAggregations(
+    await totalsQueue.add("totalsQueue", {
       recipient,
-      context,
       amount,
-    )) as {
-      updatedContextAgg: ModelInstanceDocument<AggregationContent>;
-      updatedTotalAgg: ModelInstanceDocument<AggregationContent>;
-    };
-
-    res.status(200).send({
-      contextTotal: updatedContextAgg.content
-        ? updatedContextAgg.content.points
-        : 0,
-      total: updatedTotalAgg.content ? updatedTotalAgg.content.points : 0,
-      allocationDoc: allocation?.content ?? undefined,
     });
+
+    await contextQueue.add("contextQueue", {
+      recipient,
+      context, 
+      amount,
+    });
+    
+
+    // res.status(200).send({
+    //   contextTotal: updatedContextAgg.content
+    //     ? updatedContextAgg.content.points
+    //     : 0,
+    //   total: updatedTotalAgg.content ? updatedTotalAgg.content.points : 0,
+    //   allocationDoc: allocation?.content ?? undefined,
+    // });
+    return res.status(200).send({ message: "Points successfully added to queues" });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal Server Error" });

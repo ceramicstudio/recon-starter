@@ -10,24 +10,16 @@ import {
 } from "@/types";
 import { writeScoresToPg } from "@/utils/pg/processPgPoints";
 import { processSingleContextPoints } from "@/utils/ceramic/processSingleContextPoints";
-import { curly } from "node-libcurl";
 
 const NOTION_FEEDBACK_DATABASE_ID =
   process.env.NOTION_FEEDBACK_DATABASE_ID ?? "";
 const DEFORM_FEEDBACK_FORM_ID = process.env.DEFORM_FEEDBACK_FORM_ID ?? "";
-const CERAMIC_API = process.env.CERAMIC_API ?? "";
 
 export default async function handler(
   _req: NextApiRequest,
   res: NextApiResponse,
 ) {
   try {
-    // check if ceramic is up
-    const data = await curly.get(CERAMIC_API + "/api/v0/node/healthcheck");
-    if (data.statusCode !== 200 || data.data !== "Alive!") {
-      return res.status(500).send({ error: "Ceramic is down" });
-    }
-
     // fetch the Notion and DeForm data
     const notionData = (await getNotion(
       NOTION_FEEDBACK_DATABASE_ID,

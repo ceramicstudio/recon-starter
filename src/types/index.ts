@@ -63,6 +63,9 @@ export interface AggregationContent {
 export interface TotalAggregationWorkerInput {
   recipient: string;
   amount: number;
+  verified?: boolean | null;
+  date?: string;
+  points?: number;
 }
 
 export interface ContextAggregationContent extends AggregationContent {
