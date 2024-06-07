@@ -4,7 +4,7 @@ import {
   updateTotalAggregation,
   createPatchedTotalAgg,
 } from "@/utils/ceramic/createPoints";
-import { checkCeramic } from "@/workers/ceramicCheck"
+import { checkCeramic } from "@/workers/ceramicCheck";
 import IORedis from "ioredis";
 import dotenv from "dotenv";
 
@@ -31,10 +31,10 @@ export const totalsWorker = new Worker(
       await checkCeramic();
       const data = job?.data as TotalAggregationWorkerInput;
       const response =
-        data.verified === true &&
-        data.date &&
-        data.points !== undefined &&
-        data.points > 0
+        // Check if the data is a patched total aggregation
+        data.verified !== undefined &&
+        data.date !== undefined &&
+        data.points !== undefined
           ? await createPatchedTotalAgg(
               data.recipient,
               data.date,
@@ -68,4 +68,3 @@ export const totalsWorker = new Worker(
     },
   },
 );
-

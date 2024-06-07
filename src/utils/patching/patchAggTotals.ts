@@ -36,7 +36,7 @@ export const patchAggTotals = async () => {
         (total) => total.node.recipient.id === agg.recipient,
       );
       if (!total || total.node.points !== agg.points) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
         // create a new total with the recipient, date, points, and verified status on Ceramic
         // const patchedTotal = await createPatchedTotalAgg(
         //   agg.recipient,
