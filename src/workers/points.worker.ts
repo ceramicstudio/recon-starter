@@ -18,7 +18,7 @@ export const pointsQueue = new Queue("pointsQueue", {
     maxRetriesPerRequest: null,
   }),
   defaultJobOptions: {
-    attempts: 3,
+    attempts: 5,
     backoff: {
       type: "exponential",
       delay: 1000,
@@ -30,8 +30,12 @@ export const pointsWorker = new Worker(
   "pointsQueue",
   async (job) => {
     try {
+      // Check if the Ceramic node is up
       await checkCeramic();
+
       const data = job?.data as PointsWorkerInput;
+
+      // Switch on the docType to determine which function to call
       switch (data.docType) {
         case "allocation":
           const allocationResponse = await createAllocation(data);
@@ -72,7 +76,7 @@ export const pointsWorker = new Worker(
             );
             return totalAggResponse;
           }
-          
+
         case "patchedTotal":
           const patchedTotalAggResponse = await createPatchedTotalAgg(
             data.recipient,
@@ -104,7 +108,7 @@ export const pointsWorker = new Worker(
       maxRetriesPerRequest: null,
     }),
     limiter: {
-      max: 1,
+      max: 3,
       duration: 1000,
     },
   },

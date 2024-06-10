@@ -72,12 +72,22 @@ export default async function handler(_req: NextApiRequest, res: Response) {
         const mentionsPlatform =
           tweetData.data.text.includes(X_PLATFORM_HANDLE);
 
+        // check to make sure allocationData.allocations does not already contain an entry for the recipint + context + subContext combination
+        const existingAllocation = allocationData.allocations.find(
+          (allocation) =>
+            allocation.recipient ===
+              `did:pkh:eip155:1:${wallet.toLowerCase()}` &&
+            allocation.context === "viral" &&
+            allocation.subContext === tweetData.data.text,
+        );
+
         // if all checks pass, then we can add the entry to the returnEntries array
         if (isUser && likesAboveTwo && mentionsPlatform) {
           recipientScores.push({
             recipient: `did:pkh:eip155:1:${wallet.toLowerCase()}`,
             score: 750,
             context: "viral",
+            subContext: tweetData.data.text,
           });
         }
         // if the checks fail, still add the entry to the returnEntries array, but with a score of 0 to ensure the entry is recorded
