@@ -7,7 +7,7 @@ interface PointsAggregationInterface
   id: ID!
 }
 
-type TotalPointsAggregation implements PointsAggregationInterface  # Deployed model ID: kjzl6hvfrbw6c5kay9pqvquxb6bdju0944omqd4m36darclqvsetvvzz4k8fnkx
+type TotalPointsAggregation implements PointsAggregationInterface  # Deployed model ID: kjzl6hvfrbw6c8qvlsf74xlm1lit9f7axl3yla41ba5qf2fu8un9dbtjg7k6ybo
   @createModel(
     description: "A simple aggregation model with a verified total"
     accountRelation: SET

@@ -1,4 +1,5 @@
-import { composeClient, issuer } from "@/utils/ceramic/context";
+import { composeClientOne, composeClientTwo, issuer } from "@/utils/ceramic/context";
+import {checkCeramicFast} from "@/workers/ceramicCheck";
 import { type AggTotalContent } from "@/types";
 
 export const readAggTotals = async ({
@@ -7,6 +8,9 @@ export const readAggTotals = async ({
   recipients: string[];
 }): Promise<AggTotalContent[] | undefined> => {
   try {
+    // first check which ceramic client to use
+    const composeClient = await checkCeramicFast() === 1 ? composeClientOne : composeClientTwo;
+
     const filterString = recipients
       .map((recipient, index) => {
         if (index === 0) {

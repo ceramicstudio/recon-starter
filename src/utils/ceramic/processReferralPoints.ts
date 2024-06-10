@@ -1,14 +1,9 @@
-import { type RecipientScore, type NewPoints } from "../../types";
+import { type RecipientScore } from "@/types";
 import { createPoints } from "./createPoints";
 import { getAggregation } from "@/utils/ceramic/readAggregations";
 
 export const processReferralPoints = async (scores: Array<RecipientScore>) => {
   try {
-    
-    // iterate over each score and check if the recipient's aggregation doc's points value does not match the score's points value
-    const results = [];
-
-
     for (const score of scores) {
       const response = await getAggregation(score.recipient, score.context);
       if (
@@ -21,7 +16,6 @@ export const processReferralPoints = async (scores: Array<RecipientScore>) => {
         const numOfIterations = difference / 100;
 
         for (let i = 0; i < numOfIterations; i++) {
-          // await new Promise((resolve) => setTimeout(resolve, 1000));
           // create points with the recipient's aggregation doc's points value + 100
           const newScore = {
             recipient: score.recipient,
@@ -31,11 +25,10 @@ export const processReferralPoints = async (scores: Array<RecipientScore>) => {
             multiplier: score.multiplier,
           };
           await createPoints(newScore);
-          // results.push(newPoints);
         }
       }
     }
-    // return results as Array<NewPoints> | undefined;
+
     return { message: "Successfully processed referral points" };
   } catch (error) {
     console.error(error);

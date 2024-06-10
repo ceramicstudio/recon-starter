@@ -4,7 +4,7 @@ interface PointsAggregationInterface @loadModel(id: "kjzl6hvfrbw6c5m5bxe6jl7cocy
   id: ID!
 }
 
-type ContextPointAggregation implements PointsAggregationInterface # Deployed model ID (same as in .env): kjzl6hvfrbw6cbe5nn2fktpmpbq42ouepa91pjv899k01yluz6r1zuq5phlliaq
+type ContextPointAggregation implements PointsAggregationInterface # Deployed model ID (same as in .env): kjzl6hvfrbw6c9s96ne2cpoixts2k7beee48kleq9tnc64qx3wvadal6fimfkvz
   @createModel(
     description: "A simple context-based point aggregation model"
     accountRelation: SET

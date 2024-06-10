@@ -82,7 +82,7 @@ export default async function handler(_req: NextApiRequest, res: Response) {
         );
 
         // if all checks pass, then we can add the entry to the returnEntries array
-        if (isUser && likesAboveTwo && mentionsPlatform) {
+        if (isUser && likesAboveTwo && mentionsPlatform && !existingAllocation) {
           recipientScores.push({
             recipient: `did:pkh:eip155:1:${wallet.toLowerCase()}`,
             score: 750,

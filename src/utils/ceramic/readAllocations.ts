@@ -1,8 +1,12 @@
-import { composeClient, issuer } from "./context";
+import { composeClientOne, composeClientTwo, issuer } from "./context";
+import {checkCeramicFast} from "@/workers/ceramicCheck";
 import { type AllocationNode } from "@/types";
 
 export const getAllocations = async (recipient: string, context: string) => {
   try {
+    // first check which ceramic client to use
+    const composeClient = await checkCeramicFast() === 1 ? composeClientOne : composeClientTwo;
+    
     const allocations = await composeClient.executeQuery<{
       node: {
         contextPointAllocationList: {

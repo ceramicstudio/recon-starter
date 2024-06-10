@@ -1,0 +1,104 @@
+#
+# Generic interface used by all point allocations and aggregations
+#
+
+interface PointsInterface
+  @createModel(description: "Interface for a generic points association to an account") {
+  issuer: DID! @documentAccount
+  recipient: DID! @accountReference
+  points: Int!
+}
+
+#
+# Interfaces for points allocations and aggregations
+#
+
+interface PointsAllocationInterface implements PointsInterface
+  @createModel(description: "Interface for a single allocation of points to an account") {
+  issuer: DID! @documentAccount
+  recipient: DID! @accountReference
+  points: Int!
+}
+
+interface PointsAggregationInterface implements PointsInterface
+  @createModel(description: "Interface for an aggregation of points to an account") {
+  issuer: DID! @documentAccount
+  recipient: DID! @accountReference
+  points: Int!
+  date: DateTime!
+}
+
+#
+# Default models implementing the interfaces
+#
+
+type SimplePointsAllocation implements PointsAllocationInterface
+  @createModel(description: "Simple points allocation to an account") {
+  issuer: DID! @documentAccount
+  recipient: DID! @accountReference
+  points: Int!
+}
+
+type SimplePointsAggregation implements PointsAggregationInterface
+  @createModel(
+    description: "Simple points aggregation to an account at a specific date"
+    accountRelation: SET
+    accountRelationFields: ["recipient"]
+  ) {
+  issuer: DID! @documentAccount
+  recipient: DID! @accountReference
+  points: Int!
+  date: DateTime!
+}
+
+type ContextPointAggregation implements PointsAggregationInterface 
+  @createModel(
+    description: "A simple context-based point aggregation model"
+    accountRelation: SET
+    accountRelationFields: ["recipient", "context"]
+  ) {
+  issuer: DID! @documentAccount
+  recipient: DID! @accountReference
+  points: Int!
+  date: DateTime!
+  context: String! @string(maxLength: 100)
+}
+
+type ContextPointAllocation implements PointsAllocationInterface 
+  @createModel(
+    description: "A point allocation model with a context, subcontext, trigger, and multiplier"
+    accountRelation: LIST
+  )
+  @createIndex(fields: [{ path: ["context"] }]) 
+  @createIndex(fields: [{ path: ["recipient"] }])
+  @createIndex(fields: [{ path: ["date"] }]) 
+  @createIndex(fields: [{ path: ["multiplier"] }]) 
+  @createIndex(fields: [{ path: ["subContext"] }])
+  @createIndex(fields: [{ path: ["trigger"] }])
+{
+  issuer: DID! @documentAccount
+  recipient: DID! @accountReference
+  points: Int!
+  date: DateTime!
+  context: String! @string(maxLength: 1000)
+  subContext: String @string(maxLength: 1000)
+  trigger: String @string(maxLength: 1000)
+  multiplier: Int
+}
+
+type TotalPointsAggregation implements PointsAggregationInterface 
+  @createModel(
+    description: "A simple aggregation model with a verified total"
+    accountRelation: SET
+    accountRelationFields: ["recipient"]
+  )
+  @createIndex(fields: [{ path: "points" }])
+  @createIndex(fields: [{ path: "date" }])
+  @createIndex(fields: [{ path: "verified" }])
+  @createIndex(fields: [{ path: "recipient" }]) {
+  issuer: DID! @documentAccount
+  recipient: DID! @accountReference
+  points: Int!
+  date: DateTime!
+  verified: Boolean
+}

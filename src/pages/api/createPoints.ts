@@ -1,11 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import type { ModelInstanceDocument } from "@composedb/types";
-import {
-  type AggregationContent,
-  type NewPoints,
-  type SinglePointsRequest,
-  type Error,
-} from "@/types";
+import { type SinglePointsRequest, type Error } from "@/types";
 import { pointsQueue } from "@/workers/points.worker";
 
 interface Request extends NextApiRequest {

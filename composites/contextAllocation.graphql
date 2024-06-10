@@ -7,7 +7,7 @@ interface PointsAllocationInterface
   id: ID!
 }
 
-type ContextPointAllocation implements PointsAllocationInterface # deployed model: kjzl6hvfrbw6c5poicj2v3iznbu2d3nhzu67uiz51ln7ie5pbwatilj4cn1uh5u
+type ContextPointAllocation implements PointsAllocationInterface # deployed model: kjzl6hvfrbw6c8kvjarm4j9mn0p0dv66qrkcy3gbluycf2s7ruktlznevnfi2ss
   @createModel(
     description: "A point allocation model with a context, subcontext, trigger, and multiplier"
     accountRelation: LIST

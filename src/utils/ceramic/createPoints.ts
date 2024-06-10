@@ -1,4 +1,10 @@
-import { contextWriter, writer } from "./context";
+import {
+  contextWriterOne,
+  contextWriterTwo,
+  writerOne,
+  writerTwo,
+} from "./context";
+import { checkCeramicFast } from "@/workers/ceramicCheck";
 import type { ModelInstanceDocument } from "@composedb/types";
 import {
   type PointsContent,
@@ -21,6 +27,8 @@ export const createAllocation = async ({
   ModelInstanceDocument<AllocationContent> | undefined
 > => {
   try {
+    const contextWriter =
+      (await checkCeramicFast()) === 1 ? contextWriterOne : contextWriterTwo;
     const allocation = await contextWriter.allocatePointsTo(recipient, amount, {
       context,
       date: new Date().toISOString(),
@@ -44,6 +52,8 @@ export const createContextAggregation = async (
     // get context aggregation doc if exists
     const aggregationDoc = await getAggregation(recipient, context);
 
+    const contextWriter =
+      (await checkCeramicFast()) === 1 ? contextWriterOne : contextWriterTwo;
     // update context-specific aggregation
     const updatedContextAgg: ModelInstanceDocument<AggregationContent> =
       await contextWriter.setPointsAggregationFor(
@@ -69,6 +79,7 @@ export const updateTotalAggregation = async (
   amount: number,
 ): Promise<ModelInstanceDocument<AggregationContent> | undefined> => {
   try {
+    const writer = (await checkCeramicFast()) === 1 ? writerOne : writerTwo;
     // update total aggregation
     const updatedTotalAgg: ModelInstanceDocument<AggregationContent> =
       await writer.updatePointsAggregationFor([recipient], (content) => {
@@ -88,15 +99,7 @@ export const updateTotalAggregation = async (
 export const createPoints = async (score: RecipientScore) => {
   try {
     score.amount = score.score;
-    // first create allocation
-    // const allocation = await createAllocation({
-    //   recipient: score.recipient,
-    //   amount: score.amount,
-    //   context: score.context,
-    //   multiplier: score.multiplier,
-    //   subContext: score.subContext,
-    //   trigger: score.trigger,
-    // });
+
     await pointsQueue.add("pointsQueue", {
       recipient: score.recipient,
       amount: score.amount,
@@ -108,11 +111,6 @@ export const createPoints = async (score: RecipientScore) => {
     });
 
     // then update or create context aggregation
-    // const updatedContextAgg = await createContextAggregation(
-    //   score.recipient,
-    //   score.context,
-    //   score.amount,
-    // );
     await pointsQueue.add("pointsQueue", {
       recipient: score.recipient,
       context: score.context,
@@ -121,10 +119,6 @@ export const createPoints = async (score: RecipientScore) => {
     });
 
     // then update Total Aggregation
-    // const updatedTotalAgg = await updateTotalAggregation(
-    //   score.recipient,
-    //   score.amount,
-    // );
     await pointsQueue.add("pointsQueue", {
       recipient: score.recipient,
       amount: score.amount,
@@ -147,6 +141,9 @@ export const createPatchedTotalAgg = async (
   verified: boolean | null,
 ): Promise<AggregationContent | undefined> => {
   try {
+    // check which writer to use
+    const writer = (await checkCeramicFast()) === 1 ? writerOne : writerTwo;
+
     // update total aggregation
     const updatedTotalAgg: ModelInstanceDocument<AggregationContent> =
       await writer.updatePointsAggregationFor([recipient], (content) => {

@@ -6,7 +6,6 @@ import {
   updateTotalAggregation,
   createPatchedTotalAgg,
 } from "@/utils/ceramic/createPoints";
-import { checkCeramic } from "@/workers/ceramicCheck";
 import IORedis from "ioredis";
 import dotenv from "dotenv";
 
@@ -30,9 +29,6 @@ export const pointsWorker = new Worker(
   "pointsQueue",
   async (job) => {
     try {
-      // Check if the Ceramic node is up
-      await checkCeramic();
-
       const data = job?.data as PointsWorkerInput;
 
       // Switch on the docType to determine which function to call
