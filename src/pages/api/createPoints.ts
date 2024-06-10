@@ -4,11 +4,9 @@ import {
   type AggregationContent,
   type NewPoints,
   type SinglePointsRequest,
-  type Error
+  type Error,
 } from "@/types";
-import { totalsQueue } from "@/workers/totalAggregations.worker";
-import {contextQueue} from "@/workers/contextAggregations.worker";
-import {allocationQueue} from "@/workers/allocations.worker";
+import { pointsQueue } from "@/workers/points.worker";
 
 interface Request extends NextApiRequest {
   body: SinglePointsRequest;
@@ -16,44 +14,43 @@ interface Request extends NextApiRequest {
 
 interface Response extends NextApiResponse {
   status(code: number): Response;
-  send(data: {message: string} | Error): void;
+  send(data: { message: string } | Error): void;
 }
 
 export default async function handler(req: Request, res: Response) {
   try {
-    const { recipient, amount, context, multiplier, subContext, trigger } = req.body;
+    const { recipient, amount, context, multiplier, subContext, trigger } =
+      req.body;
 
     // first create allocation
-    await allocationQueue.add("allocationsQueue", {
+    await pointsQueue.add("pointsQueue", {
       recipient,
       amount,
       context,
       multiplier,
       subContext,
       trigger,
+      docType: "allocation",
     });
 
-    // then create aggregations
-    await totalsQueue.add("totalsQueue", {
+    // then create context aggregation
+    await pointsQueue.add("pointsQueue", {
+      recipient,
+      context,
+      amount,
+      docType: "context",
+    });
+
+    // then create total aggregation
+    await pointsQueue.add("pointsQueue", {
       recipient,
       amount,
+      docType: "total",
     });
 
-    await contextQueue.add("contextQueue", {
-      recipient,
-      context, 
-      amount,
-    });
-    
-
-    // res.status(200).send({
-    //   contextTotal: updatedContextAgg.content
-    //     ? updatedContextAgg.content.points
-    //     : 0,
-    //   total: updatedTotalAgg.content ? updatedTotalAgg.content.points : 0,
-    //   allocationDoc: allocation?.content ?? undefined,
-    // });
-    return res.status(200).send({ message: "Points successfully added to queues" });
+    return res
+      .status(200)
+      .send({ message: "Points successfully added to queues" });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal Server Error" });

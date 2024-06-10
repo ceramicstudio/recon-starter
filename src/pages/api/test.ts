@@ -1,6 +1,6 @@
 import { patchMissions } from "@/utils/pg/patchMissions";
 import { getNotion } from "@/utils/notion/index";
-import {totalsQueue} from "@/workers/totalAggregations.worker";
+import {pointsQueue} from "@/workers/points.worker";
 import { getTweet } from "@/utils/twitter/index";
 import { type NextApiRequest, type NextApiResponse } from "next";
 
@@ -26,7 +26,7 @@ export default async function handler(_req: NextApiRequest, res: Response) {
       // for this example, we'll provide a message
       message: "This is a sample job",
     };
-    await totalsQueue.add("totalsQueue", data2); 
+    await pointsQueue.add("pointsQueue", data2); 
     return res.status(200).json({ status: "Message added to the queue" });
   } catch (error) {
     console.error(error);

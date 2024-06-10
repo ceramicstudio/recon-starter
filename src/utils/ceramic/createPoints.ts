@@ -8,9 +8,7 @@ import {
   type RecipientScore,
 } from "@/types";
 import { getAggregation } from "@/utils/ceramic/readAggregations";
-import { totalsQueue } from "@/workers/totalAggregations.worker";
-import {contextQueue} from "@/workers/contextAggregations.worker";
-import {allocationQueue} from "@/workers/allocations.worker";
+import { pointsQueue } from "@/workers/points.worker";
 
 export const createAllocation = async ({
   recipient,
@@ -99,13 +97,27 @@ export const createPoints = async (score: RecipientScore) => {
     //   subContext: score.subContext,
     //   trigger: score.trigger,
     // });
-    await allocationQueue.add("allocationsQueue", {
+    await pointsQueue.add("pointsQueue", {
       recipient: score.recipient,
       amount: score.amount,
       context: score.context,
       multiplier: score.multiplier,
       subContext: score.subContext,
       trigger: score.trigger,
+      docType: "allocation",
+    });
+
+    // then update or create context aggregation
+    // const updatedContextAgg = await createContextAggregation(
+    //   score.recipient,
+    //   score.context,
+    //   score.amount,
+    // );
+    await pointsQueue.add("pointsQueue", {
+      recipient: score.recipient,
+      context: score.context,
+      amount: score.amount,
+      docType: "context",
     });
 
     // then update Total Aggregation
@@ -113,26 +125,14 @@ export const createPoints = async (score: RecipientScore) => {
     //   score.recipient,
     //   score.amount,
     // );
-     await totalsQueue.add("totalsQueue", {
+    await pointsQueue.add("pointsQueue", {
       recipient: score.recipient,
       amount: score.amount,
+      docType: "total",
     });
-
-    // then create aggregations
-    // const updatedContextAgg = await createContextAggregation(
-    //   score.recipient,
-    //   score.context,
-    //   score.amount,
-    // );
-     await contextQueue.add("contextQueue", {
-      recipient: score.recipient,
-      context: score.context,  
-      amount: score.amount,  
-    });
-
 
     return {
-      message: "Successfully added requests to queues"
+      message: "Successfully added requests to queues",
     };
   } catch (error) {
     console.error(error);

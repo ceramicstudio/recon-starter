@@ -24,6 +24,13 @@ export interface SinglePointsRequest {
   multiplier?: number;
   subContext?: string;
   trigger?: string;
+  verified?: boolean | null;
+  date?: string;
+  points?: number;
+}
+
+export interface PointsWorkerInput extends SinglePointsRequest {
+  docType: string;
 }
 
 export interface NewPoints {

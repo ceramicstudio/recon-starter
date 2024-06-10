@@ -1,6 +1,6 @@
 import { getPgTotalCount } from "@/utils/pg/pgAggregationCount";
 import { readAggTotals } from "@/utils/ceramic/readAggTotals";
-import { totalsQueue } from "@/workers/totalAggregations.worker";
+import { pointsQueue } from "@/workers/points.worker";
 import { type PgTotalAggregation, type AggTotalContent } from "../../types";
 
 export const patchAggTotals = async () => {
@@ -44,11 +44,12 @@ export const patchAggTotals = async () => {
         //   agg.points,
         //   agg.verified,
         // );
-        await totalsQueue.add("totalsQueue", {
+        await pointsQueue.add("pointsQueue", {
           recipient: agg.recipient,
           date: agg.date,
           points: agg.points,
-          verified: agg.verified,
+          verified: agg.verified ?? false,
+          docType: "patchedTotal"
         });
       }
     }
