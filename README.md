@@ -12,7 +12,7 @@ The major themes we will cover are:
 We will be using this repository for part of our workshop, so let's first clone the codebase so we don't have to worry about it later (you will need npm installed):
 
 ```bash
-git clone https://github.com/ceramicstudio/software-trust-workshop && cd software-trust-workshop && npm install
+git clone https://github.com/ceramicstudio/recon-starter && cd recon-starter && npm install
 ```
 
 You can open this repository in your code editor of choice for the second half of this workshop. This implementation mimics the Kubo RPC API and relies on https://github.com/ceramicnetwork/js-ceramic for the remaining logic.
