@@ -16,13 +16,11 @@ import { env } from "../env";
 
 const font = Mulish({ subsets: ["latin"] });
 const PROJECT_ID = env.NEXT_PUBLIC_PROJECT_ID ?? "";
-const NEXT_PUBLIC_GA_TRACKING_ID = env.NEXT_PUBLIC_GA_TRACKING_ID ?? "";
 
 const chains = [mainnet];
 const wagmiConfig = defaultWagmiConfig({ chains, projectId: PROJECT_ID });
 
 createWeb3Modal({ wagmiConfig, projectId: PROJECT_ID, chains });
-ReactGA.initialize(NEXT_PUBLIC_GA_TRACKING_ID);
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -33,7 +31,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
   }, []);
   return (
     <WagmiConfig config={wagmiConfig}>
-      <SessionProvider session={session}>
       <main className={font.className}>
         <Head>
           <link rel="icon" href="/logo.png" />
@@ -47,7 +44,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <Footer />
         </ThemeProvider>
       </main>
-      </SessionProvider>
     </WagmiConfig>
   );
 };

@@ -7,10 +7,6 @@ export const footerLinks: FooterLink[] = [
   },
   {
     href: "#",
-    label: "Points Docs",
-  },
-  {
-    href: "#",
     label: "Twitter",
   },
   {
